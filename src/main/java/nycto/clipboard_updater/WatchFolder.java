@@ -30,6 +30,7 @@ public class WatchFolder {
                 for (WatchEvent<?> event : watchKey.pollEvents()) {
 
                     // STEP 5: Get file name from even context
+                    @SuppressWarnings("unchecked")
                     WatchEvent<Path> pathEvent = (WatchEvent<Path>) event;
                     Path fileName = pathEvent.context();
 
@@ -58,13 +59,13 @@ public class WatchFolder {
                         System.out.println("Clipboard set to: " + newFileName);
                     }
 
-                    if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-                        System.out.println("A file has been deleted: " + fileName);
-                    }
-
-                    if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-                        System.out.println("A file has been modified: " + fileName);
-                    }
+//                    if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+//                        System.out.println("A file has been deleted: " + fileName);
+//                    }
+//
+//                    if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+//                        System.out.println("A file has been modified: " + fileName);
+//                    }
                 }
 
                 // STEP 8: Reset the watch key everytime for continuing to use it for further event polling
