@@ -1,8 +1,8 @@
 package nycto.clipboard_updater;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,87 +15,111 @@ public class WatchFolder {
         try {
             System.out.println("Watching directory for changes");
 
-            // STEP 1: Create a watch service
+            // Creates a watch service.
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
-            // STEP 2: Get the path of the directory which you want to monitor.
+            // Gets the path of the directory to monitor.
             Path directory = Path.of("C:\\users\\myName\\Desktop\\Test");
 
-            // STEP 3: Register the directory with the watch service
-            WatchKey watchKey = directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+            // Registers the directory with the watch service to which this object is to
+            // be registered and the events for which this object should be registered.
+            directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
-            // STEP 4: Poll for events
-            while (true) {
-                for (WatchEvent<?> event : watchKey.pollEvents()) {
+            try {
+                // Waits for and retrieves events.
+                WatchKey key;
 
-                    // STEP 5: Get file name from even context
-                    @SuppressWarnings("unchecked")
-                    WatchEvent<Path> pathEvent = (WatchEvent<Path>) event;
-                    Path fileName = pathEvent.context();
+                while ((key = watchService.take()) != null) {
+                    for (WatchEvent<?> event : key.pollEvents()) {
+                        @SuppressWarnings("unchecked")
+                        WatchEvent<Path> pathEvent = (WatchEvent<Path>) event;
 
-                    // STEP 6: Check type of event.
-                    WatchEvent.Kind<?> kind = event.kind();
+                        // Gets the filename from the event context.
+                        Path filename = pathEvent.context();
 
-                    // STEP 7: Perform necessary action with the event
-                    if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        String[] fileNameParts = fileName.toString().split(" \\(");
+                        String filenameString = filename.toString();
 
-                        // Example: Very Cool Car (21).jpg => "Very Cool Car"
-                        String fileNameBWAFB = fileNameParts[0];
-                        // BFBAW => Before Whitespace And First Bracket
+                        if (filenameString.endsWith(".crdownload")) break;
 
-                        int fileNameCounter = Integer.parseInt(fileName.toString().replaceAll("^\\D*?(-?\\d+).*$", "$1"));
-                        int newFileNameCounter = fileNameCounter + 1;
+                        // Checks the type of the event.
+                        WatchEvent.Kind<?> kind = event.kind();
 
-                        String newFileName = fileNameBWAFB + " (" + newFileNameCounter + ")";
+                        // Performs the necessary action with the create event.
+                        // The code up to the break runs twice.
+                        if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+                            Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-                        System.out.println("A new file is created: " + fileName);
-                        Toolkit toolkit = Toolkit.getDefaultToolkit();
-                        Clipboard clipboard = toolkit.getSystemClipboard();
-                        StringSelection strSel = new StringSelection(newFileName);
-                        clipboard.setContents(strSel, null);
+                            Clipboard clipboard = toolkit.getSystemClipboard();
 
-                        System.out.println("Clipboard set to: " + newFileName);
+                            String newFilename = createNewFilename(filenameString);
+
+                            Transferable clipboardContents = clipboard.getContents(null);
+
+                            boolean clipboardHasString = (clipboardContents != null) &&
+                                    clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
+
+                            if (clipboardHasString) {
+                                try {
+                                    String clipboardString =
+                                            (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
+
+                                    if (clipboardString.equals(newFilename)) break;
+                                } catch (UnsupportedFlavorException | IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            System.out.println("A new file is created: " + filename);
+
+                            StringSelection newFilenameStringSelection = new StringSelection(newFilename);
+
+                            clipboard.setContents(newFilenameStringSelection, null);
+
+                            System.out.println("Clipboard set to: " + newFilename);
+                        }
                     }
 
-//                    if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-//                        System.out.println("A file has been deleted: " + fileName);
-//                    }
-//
-//                    if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
-//                        System.out.println("A file has been modified: " + fileName);
-//                    }
-                }
+                    // Resets the watch key everytime for continuing to use it for further event retrieval.
+                    boolean valid = key.reset();
 
-                // STEP 8: Reset the watch key everytime for continuing to use it for further event polling
-                boolean valid = watchKey.reset();
-                if (!valid) {
-                    break;
+                    if (!valid) {
+                        break;
+                    }
                 }
-
+            } catch (InterruptedException e) {
+                // Restores interrupted status.
+                Thread.currentThread().interrupt();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private static String createNewFilename(String filenameString) {
+        String[] filenameParts = filenameString.split(" \\(");
+
+        // Example: Very Cool Car (21).jpg => "Very Cool Car"
+        String filenameBeforeWhitespaceAndFirstBracket = filenameParts[0];
+
+        String filenameAfterFirstBracket = filenameParts[1];
+
+        int filenameCounter = Integer.parseInt(filenameAfterFirstBracket.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
+
+        return filenameBeforeWhitespaceAndFirstBracket + " (" + (filenameCounter + 1) + ")";
     }
 
     public static class WatchCallable implements Callable<Void> {
         @Override
         public Void call() {
-
             WatchFolder wf = new WatchFolder();
             wf.watchFolder();
 
             return null;
         }
-
     }
 
     public static void main(String[] args) {
-        System.out.println("Starting a background thread for watching folders");
+        System.out.println("Starting a background thread for watching folder");
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
