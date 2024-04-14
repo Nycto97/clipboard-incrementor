@@ -13,7 +13,7 @@ public class WatchFolder {
     public void watchFolder() {
 
         try {
-            System.out.println("Watching directory for changes");
+            System.out.println("Watching directory for changes" + "\n");
 
             // Creates a watch service.
             WatchService watchService = FileSystems.getDefault().newWatchService();
@@ -69,13 +69,13 @@ public class WatchFolder {
                                 }
                             }
 
-                            System.out.println("A new file is created: " + filename);
+                            System.out.println("New file is created: " + filename);
 
                             StringSelection newFilenameStringSelection = new StringSelection(newFilename);
 
                             clipboard.setContents(newFilenameStringSelection, null);
 
-                            System.out.println("Clipboard set to: " + newFilename);
+                            System.out.println("Clipboard is set to: " + newFilename + "\n");
                         }
                     }
 
@@ -119,12 +119,12 @@ public class WatchFolder {
     }
 
     public static void main(String[] args) {
-        System.out.println("Starting a background thread for watching folder");
+        System.out.println("\n" + "Starting a background thread for watching folder");
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
         executor.submit(new WatchCallable());
 
-        System.out.println("After submitting Callable for watching folder");
+        System.out.println("After submitting Callable for watching folder" + "\n");
     }
 }
