@@ -69,7 +69,15 @@ public class WatchFolder {
                                 }
                             }
 
-                            System.out.println("New file is created: " + filename);
+                            String newFileCreatedText = "New file is created: ";
+
+                            int dividerLength = (newFileCreatedText.length() + filenameString.length()) / 2;
+
+                            String divider = "- ".repeat(dividerLength);
+
+                            System.out.println(divider + "\n");
+
+                            System.out.println(newFileCreatedText + filenameString);
 
                             StringSelection newFilenameStringSelection = new StringSelection(newFilename);
 
