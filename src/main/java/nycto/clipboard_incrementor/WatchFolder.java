@@ -1,4 +1,4 @@
-package nycto.clipboard_updater;
+package nycto.clipboard_incrementor;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
