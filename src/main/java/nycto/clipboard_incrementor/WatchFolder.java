@@ -140,11 +140,11 @@ public class WatchFolder {
 
         if (matcher.find()) {
             String lastNumberString = matcher.group(1);
-            int lastNumberInt = Integer.parseInt(lastNumberString);
+            long lastNumberLong = Long.parseLong(lastNumberString);
 
-            lastNumberInt++;
+            lastNumberLong++;
 
-            valueNew = value.substring(0, matcher.start(1)) + lastNumberInt + value.substring(matcher.end(1));
+            valueNew = value.substring(0, matcher.start(1)) + lastNumberLong + value.substring(matcher.end(1));
         } else {
             System.out.println("No number was found in the filename." + "\n" +
                     "Added \" (1)\" to the filename.");
