@@ -135,6 +135,20 @@ public class WatchFolder {
         return filenameBeforeWhitespaceAndFirstBracket + " (" + (filenameCounter + 1) + ")";
     }
 
+    public static String removeFileExtension(String filename, boolean removeAllExtensions) {
+        if (filename == null || filename.isEmpty()) {
+            return filename;
+        }
+
+        String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
+
+        return filename.replaceAll(extensionPattern, "");
+    }
+
+    public static String removeFileExtensions(String filename) {
+        return removeFileExtension(filename, true);
+    }
+
     public static class WatchCallable implements Callable<Void> {
         @Override
         public Void call() {
