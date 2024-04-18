@@ -140,11 +140,23 @@ public class WatchFolder {
 
         if (matcher.find()) {
             String lastNumberString = matcher.group(1);
-            long lastNumberLong = Long.parseLong(lastNumberString);
 
-            lastNumberLong++;
+            try {
+                long lastNumber = Long.parseLong(lastNumberString);
 
-            valueNew = value.substring(0, matcher.start(1)) + lastNumberLong + value.substring(matcher.end(1));
+                long lastNumberNew = lastNumber + 1;
+
+                valueNew =
+                        value.substring(0, matcher.start(1)) + lastNumberNew + value.substring(matcher.end(1));
+
+            } catch (NumberFormatException exception) {
+                System.out.println("The (last) number in the filename is too large to increment." + "\n" +
+                        "Added \" (1)\" to the filename instead.");
+
+                exception.printStackTrace();
+
+                valueNew += " (1)";
+            }
         } else {
             System.out.println("No number was found in the filename." + "\n" +
                     "Added \" (1)\" to the filename.");
