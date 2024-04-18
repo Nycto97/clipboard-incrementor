@@ -26,6 +26,8 @@ import java.nio.file.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WatchFolder {
 
@@ -133,6 +135,29 @@ public class WatchFolder {
         int filenameCounter = Integer.parseInt(filenameAfterFirstBracket.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
 
         return filenameBeforeWhitespaceAndFirstBracket + " (" + (filenameCounter + 1) + ")";
+    }
+
+    public static String incrementLastNumber(String value) {
+        // Pattern to match the last number in a string
+        Pattern pattern = Pattern.compile("(\\d+)(?!.*\\d)");
+
+        Matcher matcher = pattern.matcher(value);
+
+        if (matcher.find()) {
+            String lastNumberString = matcher.group(1);
+            int lastNumberInt = Integer.parseInt(lastNumberString);
+
+            lastNumberInt++;
+
+            value = value.substring(0, matcher.start(1)) + lastNumberInt + value.substring(matcher.end(1));
+        } else {
+            System.out.println("No number was found in the filename." + "\n" +
+                    "Added \" (1)\" to the filename.");
+
+            value += " (1)";
+        }
+
+        return value;
     }
 
     public static String removeFileExtension(String filename, boolean removeAllExtensions) {
