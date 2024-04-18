@@ -36,43 +36,34 @@ public class WatchFolder {
         try {
             System.out.println("Watching directory for changes" + "\n");
 
-            // Creates a watch service.
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
-            // Gets the path of the directory to monitor.
             Path directory = Path.of("C:\\users\\myName\\Desktop\\Test");
 
-            // Registers the directory with the watch service to which this object is to
-            // be registered and the events for which this object should be registered.
             directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
+            WatchKey watchKey;
+
             try {
-                // Waits for and retrieves events.
-                WatchKey key;
-
-                while ((key = watchService.take()) != null) {
-                    for (WatchEvent<?> event : key.pollEvents()) {
+                // Wait for and retrieve events
+                while ((watchKey = watchService.take()) != null) {
+                    for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
                         @SuppressWarnings("unchecked")
-                        WatchEvent<Path> pathEvent = (WatchEvent<Path>) event;
+                        WatchEvent<Path> pathEvent = (WatchEvent<Path>) watchEvent;
 
-                        // Gets the filename from the event context.
-                        Path filename = pathEvent.context();
+                        String filename = pathEvent.context().toString();
 
-                        String filenameString = filename.toString();
+                        if (filename.endsWith(".crdownload")) break;
 
-                        if (filenameString.endsWith(".crdownload")) break;
+                        WatchEvent.Kind<?> kind = watchEvent.kind();
 
-                        // Checks the type of the event.
-                        WatchEvent.Kind<?> kind = event.kind();
-
-                        // Performs the necessary action with the create event.
                         // The code up to the break runs twice.
                         if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
                             Toolkit toolkit = Toolkit.getDefaultToolkit();
 
                             Clipboard clipboard = toolkit.getSystemClipboard();
 
-                            String newFilename = createNewFilename(filenameString);
+                            String newFilename = createNewFilename(filename);
 
                             Transferable clipboardContents = clipboard.getContents(null);
 
@@ -92,13 +83,13 @@ public class WatchFolder {
 
                             String newFileCreatedText = "New file is created: ";
 
-                            int dividerLength = (newFileCreatedText.length() + filenameString.length()) / 2;
+                            int dividerLength = (newFileCreatedText.length() + filename.length()) / 2;
 
                             String divider = "- ".repeat(dividerLength);
 
                             System.out.println(divider + "\n");
 
-                            System.out.println(newFileCreatedText + filenameString);
+                            System.out.println(newFileCreatedText + filename);
 
                             StringSelection newFilenameStringSelection = new StringSelection(newFilename);
 
@@ -108,19 +99,17 @@ public class WatchFolder {
                         }
                     }
 
-                    // Resets the watch key everytime for continuing to use it for further event retrieval.
-                    boolean valid = key.reset();
+                    // Reset the watch key everytime for continuing to use it for further event retrieval
+                    boolean valid = watchKey.reset();
 
-                    if (!valid) {
-                        break;
-                    }
+                    if (!valid) break;
                 }
             } catch (InterruptedException e) {
-                // Restores interrupted status.
+                // Restore interrupted status
                 Thread.currentThread().interrupt();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -131,25 +120,24 @@ public class WatchFolder {
     }
 
     public static String incrementLastNumber(String value) {
-        // Pattern to match the last number in a string
-        Pattern pattern = Pattern.compile("(\\d+)(?!.*\\d)");
+        Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
 
-        Matcher matcher = pattern.matcher(value);
+        Matcher lastNumberMatcher = lastNumberPattern.matcher(value);
 
         String valueNew = value;
 
-        if (matcher.find()) {
-            String lastNumberString = matcher.group(1);
+        if (lastNumberMatcher.find()) {
+            String lastNumberString = lastNumberMatcher.group(1);
 
-            int leadingZeros = 0;
+            int leadingZerosCount = 0;
 
             if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
                 Pattern leadingZeroPattern = Pattern.compile("^0+");
 
-                Matcher zeroMatcher = leadingZeroPattern.matcher(lastNumberString);
+                Matcher leadingZeroMatcher = leadingZeroPattern.matcher(lastNumberString);
 
-                if (zeroMatcher.find()) {
-                    leadingZeros = zeroMatcher.group().length();
+                if (leadingZeroMatcher.find()) {
+                    leadingZerosCount = leadingZeroMatcher.group().length();
                 }
             }
 
@@ -165,17 +153,17 @@ public class WatchFolder {
                     lastNumberNew = lastNumberNew.substring(1);
                 }
 
-                if (leadingZeros > 0) {
+                if (leadingZerosCount > 0) {
                     if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
-                            lastNumberString.length() == leadingZeros) {
-                        leadingZeros--;
+                            lastNumberString.length() == leadingZerosCount) {
+                        leadingZerosCount--;
                     }
 
-                    lastNumberNew = "0".repeat(leadingZeros) + lastNumberNew;
+                    lastNumberNew = "0".repeat(leadingZerosCount) + lastNumberNew;
                 }
 
-                valueNew =
-                        value.substring(0, matcher.start(1)) + lastNumberNew + value.substring(matcher.end(1));
+                valueNew = value.substring(0, lastNumberMatcher.start(1)) + lastNumberNew +
+                        value.substring(lastNumberMatcher.end(1));
 
             } catch (NumberFormatException exception) {
                 System.out.println("The (last) number in the filename is too large to increment." + "\n" +
@@ -213,6 +201,7 @@ public class WatchFolder {
         @Override
         public Void call() {
             WatchFolder wf = new WatchFolder();
+
             wf.watchFolder();
 
             return null;
