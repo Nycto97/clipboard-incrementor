@@ -166,7 +166,8 @@ public class WatchFolder {
                 }
 
                 if (leadingZeros > 0) {
-                    if (lastNumberNew.length() > String.valueOf(lastNumber).length()) {
+                    if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
+                            lastNumberString.length() == leadingZeros) {
                         leadingZeros--;
                     }
 
