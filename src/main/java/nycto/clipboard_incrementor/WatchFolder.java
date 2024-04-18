@@ -141,6 +141,18 @@ public class WatchFolder {
         if (matcher.find()) {
             String lastNumberString = matcher.group(1);
 
+            int leadingZeros = 0;
+
+            if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
+                Pattern leadingZeroPattern = Pattern.compile("^0+");
+
+                Matcher zeroMatcher = leadingZeroPattern.matcher(lastNumberString);
+
+                if (zeroMatcher.find()) {
+                    leadingZeros = zeroMatcher.group().length();
+                }
+            }
+
             try {
                 long lastNumber = Long.parseLong(lastNumberString);
 
@@ -151,6 +163,10 @@ public class WatchFolder {
                     // This only occurs when lastNumber is exactly 9,223,372,036,854,775,807 (Long.MAX_VALUE)
                     // lastNumber + 1 will result in -9,223,372,036,854,775,808 if this is the case
                     lastNumberNew = lastNumberNew.substring(1);
+                }
+
+                if (leadingZeros > 0) {
+                    lastNumberNew = "0".repeat(leadingZeros) + lastNumberNew;
                 }
 
                 valueNew =
