@@ -136,21 +136,23 @@ public class WatchFolder {
 
         Matcher matcher = pattern.matcher(value);
 
+        String valueNew = value;
+
         if (matcher.find()) {
             String lastNumberString = matcher.group(1);
             int lastNumberInt = Integer.parseInt(lastNumberString);
 
             lastNumberInt++;
 
-            value = value.substring(0, matcher.start(1)) + lastNumberInt + value.substring(matcher.end(1));
+            valueNew = value.substring(0, matcher.start(1)) + lastNumberInt + value.substring(matcher.end(1));
         } else {
             System.out.println("No number was found in the filename." + "\n" +
                     "Added \" (1)\" to the filename.");
 
-            value += " (1)";
+            valueNew += " (1)";
         }
 
-        return value;
+        return valueNew;
     }
 
     public static String removeFileExtension(String filename, boolean removeAllExtensions) {
