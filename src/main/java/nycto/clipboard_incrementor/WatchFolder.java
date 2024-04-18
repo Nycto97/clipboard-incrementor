@@ -144,7 +144,14 @@ public class WatchFolder {
             try {
                 long lastNumber = Long.parseLong(lastNumberString);
 
-                long lastNumberNew = lastNumber + 1;
+                String lastNumberNew = String.valueOf(lastNumber + 1);
+
+                if (lastNumber == Long.MAX_VALUE) {
+                    // Remove the negative sign caused by overflow
+                    // This only occurs when lastNumber is exactly 9,223,372,036,854,775,807 (Long.MAX_VALUE)
+                    // lastNumber + 1 will result in -9,223,372,036,854,775,808 if this is the case
+                    lastNumberNew = lastNumberNew.substring(1);
+                }
 
                 valueNew =
                         value.substring(0, matcher.start(1)) + lastNumberNew + value.substring(matcher.end(1));
