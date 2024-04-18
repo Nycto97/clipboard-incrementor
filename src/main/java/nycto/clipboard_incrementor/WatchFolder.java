@@ -124,17 +124,10 @@ public class WatchFolder {
         }
     }
 
-    private static String createNewFilename(String filenameString) {
-        String[] filenameParts = filenameString.split(" \\(");
+    private static String createNewFilename(String filename) {
+        String filenameWithoutExtensions = removeFileExtensions(filename);
 
-        // Example: Very Cool Car (21).jpg => "Very Cool Car"
-        String filenameBeforeWhitespaceAndFirstBracket = filenameParts[0];
-
-        String filenameAfterFirstBracket = filenameParts[1];
-
-        int filenameCounter = Integer.parseInt(filenameAfterFirstBracket.replaceAll("^\\D*?(-?\\d+).*$", "$1"));
-
-        return filenameBeforeWhitespaceAndFirstBracket + " (" + (filenameCounter + 1) + ")";
+        return incrementLastNumber(filenameWithoutExtensions);
     }
 
     public static String incrementLastNumber(String value) {
