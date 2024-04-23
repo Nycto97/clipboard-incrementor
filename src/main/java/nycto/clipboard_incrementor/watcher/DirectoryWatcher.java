@@ -109,13 +109,10 @@ public class DirectoryWatcher implements Callable<Void> {
     }
 
     String createDivider(int length) throws IllegalArgumentException {
-        try {
-            return "- ".repeat(length) + "\n";
-        } catch (IllegalArgumentException illegalArgumentException) {
-            illegalArgumentException.printStackTrace();
-
-            throw new IllegalArgumentException("Could not create divider because the length is negative",
-                    illegalArgumentException);
+        if (length < 0) {
+            throw new IllegalArgumentException("Length can't be a negative number");
         }
+
+        return "- ".repeat(length) + "\n";
     }
 }

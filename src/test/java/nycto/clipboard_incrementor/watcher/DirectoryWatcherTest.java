@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DirectoryWatcherTest {
     private static DirectoryWatcher directoryWatcher;
@@ -41,7 +42,7 @@ class DirectoryWatcherTest {
     }
 
     @Test
-    void createDivider() {
+    void createDivider_handlePositiveLength() {
         assertEquals("\n", createDivider(0));
         assertEquals("- \n", createDivider(1));
         assertEquals("- - - \n", createDivider(3));
@@ -49,5 +50,13 @@ class DirectoryWatcherTest {
         assertEquals("- - - - - - - - - - \n", createDivider(10));
         assertEquals("- - - - - - - - - - - - - - - - - \n", createDivider(17));
         assertEquals("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n", createDivider(31));
+    }
+
+    @Test
+    void createDivider_handleNegativeLength() {
+        assertThrows(IllegalArgumentException.class, () -> createDivider(-6348));
+        assertThrows(IllegalArgumentException.class, () -> createDivider(-25));
+        assertThrows(IllegalArgumentException.class, () -> createDivider(-7));
+        assertThrows(IllegalArgumentException.class, () -> createDivider(-1));
     }
 }
