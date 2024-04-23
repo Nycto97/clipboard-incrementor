@@ -76,7 +76,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                             String newFileCreatedText = "New file is created: ";
 
-                            printDivider((newFileCreatedText.length() + filename.length()) / 2);
+                            System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
 
                             System.out.println(newFileCreatedText + filename);
 
@@ -102,7 +102,7 @@ public class DirectoryWatcher implements Callable<Void> {
         return null;
     }
 
-    public void printDivider(int length) {
-        System.out.println("- ".repeat(length) + "\n");
+    public String createDivider(int length) {
+        return "- ".repeat(length) + "\n";
     }
 }
