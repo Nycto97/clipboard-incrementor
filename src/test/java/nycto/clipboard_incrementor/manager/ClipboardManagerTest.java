@@ -19,26 +19,39 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.awt.datatransfer.Clipboard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClipboardManagerTest {
-    private static ClipboardManager clipboardManager;
+    private ClipboardManager clipboardManager;
 
-    @BeforeAll
-    static void setup() {
-        clipboardManager = new ClipboardManager();
+    @BeforeEach
+    void setup() {
+        Clipboard testClipboard = new Clipboard("testClipboard");
+        
+        clipboardManager = new ClipboardManager(testClipboard);
+    }
+
+    private String getClipboardText() {
+        return clipboardManager.getClipboardText();
+    }
+
+    private void setClipboardText(String clipboardText) {
+        clipboardManager.setClipboardText(clipboardText);
+
     }
 
     @Test
     void setAndGetClipboardText() {
         String expectedText = "Hello, World! (2024)";
 
-        clipboardManager.setClipboardText(expectedText);
+        setClipboardText(expectedText);
 
-        String actualText = clipboardManager.getClipboardText();
+        String actualText = getClipboardText();
 
         assertEquals(expectedText, actualText);
     }
