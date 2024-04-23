@@ -26,15 +26,19 @@ import java.io.IOException;
 public class ClipboardManager {
     private final Clipboard clipboard;
 
-    public ClipboardManager() throws IllegalStateException {
-        try {
-            Toolkit toolkit = Toolkit.getDefaultToolkit();
+    public ClipboardManager(Clipboard clipboard) throws IllegalStateException {
+        if (clipboard == null) {
+            try {
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-            this.clipboard = toolkit.getSystemClipboard();
-        } catch (AWTError | HeadlessException exception) {
-            exception.printStackTrace();
+                this.clipboard = toolkit.getSystemClipboard();
+            } catch (AWTError | HeadlessException exception) {
+                exception.printStackTrace();
 
-            throw new IllegalStateException("Could not get system clipboard", exception);
+                throw new IllegalStateException("Could not get system clipboard", exception);
+            }
+        } else {
+            this.clipboard = clipboard;
         }
     }
 

@@ -62,7 +62,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     /* The code up to the break runs twice */
                     if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        ClipboardManager clipboardManager = new ClipboardManager();
+                        ClipboardManager clipboardManager = new ClipboardManager(null);
 
                         FilenameManager filenameManager = new FilenameManager();
 
