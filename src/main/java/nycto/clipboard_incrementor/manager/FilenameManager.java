@@ -30,7 +30,7 @@ public class FilenameManager {
         return incrementLastNumber(filenameWithoutExtensions);
     }
 
-    public String incrementLastNumber(String filenameWithoutExtensions) {
+    String incrementLastNumber(String filenameWithoutExtensions) {
         String filenameNew = filenameWithoutExtensions;
 
         try {
@@ -106,7 +106,7 @@ public class FilenameManager {
         }
     }
 
-    public String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
+    String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
         if (!filename.contains(".")) return filename;
 
         String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
@@ -121,7 +121,7 @@ public class FilenameManager {
         }
     }
 
-    public String removeFileExtensions(String filename) {
+    String removeFileExtensions(String filename) {
         if (!filename.contains(".")) return filename;
 
         return removeFileExtension(filename, true);

@@ -25,26 +25,26 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FilenameManagerTest {
-    static FilenameManager filenameManager;
+    private static FilenameManager filenameManager;
 
     @BeforeAll
     static void setup() {
         filenameManager = new FilenameManager();
     }
 
-    String createNewFilename(String filename) {
+    private String createNewFilename(String filename) {
         return filenameManager.createNewFilename(filename);
     }
 
-    String incrementLastNumber(String filenameWithoutExtensions) {
+    private String incrementLastNumber(String filenameWithoutExtensions) {
         return filenameManager.incrementLastNumber(filenameWithoutExtensions);
     }
 
-    String removeFileExtension(String filename, boolean removeAllExtensions) {
+    private String removeFileExtension(String filename, boolean removeAllExtensions) {
         return filenameManager.removeFileExtension(filename, removeAllExtensions);
     }
 
-    String removeFileExtensions(String filename) {
+    private String removeFileExtensions(String filename) {
         return filenameManager.removeFileExtensions(filename);
     }
 

@@ -108,7 +108,7 @@ public class DirectoryWatcher implements Callable<Void> {
         return null;
     }
 
-    public String createDivider(int length) throws IllegalArgumentException {
+    String createDivider(int length) throws IllegalArgumentException {
         try {
             return "- ".repeat(length) + "\n";
         } catch (IllegalArgumentException illegalArgumentException) {
