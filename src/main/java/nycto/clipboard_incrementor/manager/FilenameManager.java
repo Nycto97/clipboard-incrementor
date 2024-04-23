@@ -96,12 +96,16 @@ public class FilenameManager {
     }
 
     public String removeFileExtension(String filename, boolean removeAllExtensions) {
+        if (!filename.contains(".")) return filename;
+
         String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
 
         return filename.replaceAll(extensionPattern, "");
     }
 
     public String removeFileExtensions(String filename) {
+        if (!filename.contains(".")) return filename;
+
         return removeFileExtension(filename, true);
     }
 }
