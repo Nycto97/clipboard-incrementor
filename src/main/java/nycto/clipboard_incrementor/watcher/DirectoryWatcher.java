@@ -22,6 +22,7 @@ package nycto.clipboard_incrementor.watcher;
 import nycto.clipboard_incrementor.manager.ClipboardManager;
 import nycto.clipboard_incrementor.manager.FilenameManager;
 
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,62 +48,74 @@ public class DirectoryWatcher implements Callable<Void> {
 
             WatchKey watchKey;
 
-            try {
-                /* Wait for and retrieve watch events */
-                while ((watchKey = watchService.take()) != null) {
-                    for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
-                        @SuppressWarnings("unchecked")
-                        WatchEvent<Path> pathWatchEvent = (WatchEvent<Path>) watchEvent;
+            /* Wait for and retrieve watch events */
+            while ((watchKey = watchService.take()) != null) {
+                for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
+                    @SuppressWarnings("unchecked")
+                    WatchEvent<Path> pathWatchEvent = (WatchEvent<Path>) watchEvent;
 
-                        String filename = pathWatchEvent.context().toString();
+                    String filename = pathWatchEvent.context().toString();
 
-                        if (filename.endsWith(".crdownload")) break;
+                    if (filename.endsWith(".crdownload")) break;
 
-                        WatchEvent.Kind<?> watchEventKind = watchEvent.kind();
+                    WatchEvent.Kind<?> watchEventKind = watchEvent.kind();
 
-                        /* The code up to the break runs twice */
-                        if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                            ClipboardManager clipboardManager = new ClipboardManager();
+                    /* The code up to the break runs twice */
+                    if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
+                        ClipboardManager clipboardManager = new ClipboardManager();
 
-                            FilenameManager filenameManager = new FilenameManager();
+                        FilenameManager filenameManager = new FilenameManager();
 
-                            String clipboardText = clipboardManager.getClipboardText();
+                        String clipboardText = clipboardManager.getClipboardText();
 
-                            String newFilename = filenameManager.createNewFilename(filename);
+                        String newFilename = filenameManager.createNewFilename(filename);
 
-                            if (processedFilenames.contains(filename) || clipboardText.equals(newFilename)) {
-                                break;
-                            }
-
-                            String newFileCreatedText = "New file is created: ";
-
-                            System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
-
-                            System.out.println(newFileCreatedText + filename);
-
-                            clipboardManager.setClipboardText(newFilename);
-
-                            processedFilenames.add(filename);
+                        if (processedFilenames.contains(filename) || clipboardText.equals(newFilename)) {
+                            break;
                         }
+
+                        String newFileCreatedText = "New file is created: ";
+
+                        System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
+
+                        System.out.println(newFileCreatedText + filename);
+
+                        clipboardManager.setClipboardText(newFilename);
+
+                        processedFilenames.add(filename);
                     }
-
-                    /* Reset the watch key everytime for continuing to use it for further event retrieval */
-                    boolean isWatchKeyValid = watchKey.reset();
-
-                    if (!isWatchKeyValid) break;
                 }
-            } catch (InterruptedException exception) {
+
+                /* Reset the watch key everytime for continuing to use it for further event retrieval */
+                boolean isWatchKeyValid = watchKey.reset();
+
+                if (!isWatchKeyValid) break;
+            }
+        } catch (ClassCastException | ClosedWatchServiceException | IOException | IllegalArgumentException |
+                 NullPointerException | SecurityException | UnsupportedOperationException exception) {
+            exception.printStackTrace();
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+
+            try {
                 /* Restore interrupted status */
                 Thread.currentThread().interrupt();
+            } catch (SecurityException securityException) {
+                securityException.printStackTrace();
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
 
         return null;
     }
 
-    public String createDivider(int length) {
-        return "- ".repeat(length) + "\n";
+    public String createDivider(int length) throws IllegalArgumentException {
+        try {
+            return "- ".repeat(length) + "\n";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            illegalArgumentException.printStackTrace();
+
+            throw new IllegalArgumentException("Could not create divider because the length is negative",
+                    illegalArgumentException);
+        }
     }
 }

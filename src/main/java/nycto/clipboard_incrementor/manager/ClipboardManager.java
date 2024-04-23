@@ -26,13 +26,19 @@ import java.io.IOException;
 public class ClipboardManager {
     private final Clipboard clipboard;
 
-    public ClipboardManager() {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
+    public ClipboardManager() throws IllegalStateException {
+        try {
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-        this.clipboard = toolkit.getSystemClipboard();
+            this.clipboard = toolkit.getSystemClipboard();
+        } catch (AWTError | HeadlessException exception) {
+            exception.printStackTrace();
+
+            throw new IllegalStateException("Could not get system clipboard", exception);
+        }
     }
 
-    public String getClipboardText() {
+    public String getClipboardText() throws IllegalStateException {
         Transferable clipboardContents = clipboard.getContents(null);
 
         boolean clipboardHasString = (clipboardContents != null) &&
@@ -43,17 +49,25 @@ public class ClipboardManager {
                 return (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
             } catch (IOException | UnsupportedFlavorException exception) {
                 exception.printStackTrace();
-            }
-        }
 
-        return null;
+                throw new IllegalStateException("Could not get clipboard contents", exception);
+            }
+        } else {
+            return null;
+        }
     }
 
-    public void setClipboardText(String clipboardText) {
+    public void setClipboardText(String clipboardText) throws IllegalStateException {
         StringSelection clipboardTextStringSelection = new StringSelection(clipboardText);
 
-        clipboard.setContents(clipboardTextStringSelection, null);
+        try {
+            clipboard.setContents(clipboardTextStringSelection, null);
 
-        System.out.println("Clipboard is set to: " + clipboardText + "\n");
+            System.out.println("Clipboard is set to: " + clipboardText + "\n");
+        } catch (IllegalStateException illegalStateException) {
+            illegalStateException.printStackTrace();
+
+            throw new IllegalStateException("Could not set clipboard text", illegalStateException);
+        }
     }
 }

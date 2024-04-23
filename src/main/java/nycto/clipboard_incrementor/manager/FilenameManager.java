@@ -21,6 +21,7 @@ package nycto.clipboard_incrementor.manager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class FilenameManager {
     public String createNewFilename(String filename) {
@@ -32,75 +33,92 @@ public class FilenameManager {
     public String incrementLastNumber(String filenameWithoutExtensions) {
         String filenameNew = filenameWithoutExtensions;
 
-        Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
+        try {
+            Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
 
-        Matcher lastNumberMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
+            Matcher lastNumberMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
 
-        if (lastNumberMatcher.find()) {
-            String lastNumberString = lastNumberMatcher.group(1);
+            if (lastNumberMatcher.find()) {
+                String lastNumberString = lastNumberMatcher.group(1);
 
-            int leadingZerosCount = 0;
+                int leadingZerosCount = 0;
 
-            if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
-                Pattern leadingZeroPattern = Pattern.compile("^0+");
+                if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
+                    Pattern leadingZeroPattern = Pattern.compile("^0+");
 
-                Matcher leadingZeroMatcher = leadingZeroPattern.matcher(lastNumberString);
+                    Matcher leadingZeroMatcher = leadingZeroPattern.matcher(lastNumberString);
 
-                if (leadingZeroMatcher.find()) {
-                    leadingZerosCount = leadingZeroMatcher.group().length();
-                }
-            }
-
-            try {
-                long lastNumber = Long.parseLong(lastNumberString);
-
-                String lastNumberNew = String.valueOf(lastNumber + 1);
-
-                if (lastNumber == Long.MAX_VALUE) {
-                    /*
-                     * Remove the negative sign caused by overflow
-                     * This only occurs when lastNumber is exactly 9,223,372,036,854,775,807 (Long.MAX_VALUE)
-                     * lastNumber + 1 will result in -9,223,372,036,854,775,808 if this is the case
-                     */
-                    lastNumberNew = lastNumberNew.substring(1);
+                    if (leadingZeroMatcher.find()) {
+                        leadingZerosCount = leadingZeroMatcher.group().length();
+                    }
                 }
 
-                if (leadingZerosCount > 0) {
-                    if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
-                            lastNumberString.length() == leadingZerosCount) {
-                        leadingZerosCount--;
+                try {
+                    long lastNumber = Long.parseLong(lastNumberString);
+
+                    String lastNumberNew = String.valueOf(lastNumber + 1);
+
+                    if (lastNumber == Long.MAX_VALUE) {
+                        /*
+                         * Remove the negative sign caused by overflow
+                         * This only occurs when lastNumber is exactly 9,223,372,036,854,775,807 (Long.MAX_VALUE)
+                         * lastNumber + 1 will result in -9,223,372,036,854,775,808 if this is the case
+                         */
+                        lastNumberNew = lastNumberNew.substring(1);
                     }
 
-                    lastNumberNew = "0".repeat(leadingZerosCount) + lastNumberNew;
+                    if (leadingZerosCount > 0) {
+                        if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
+                                lastNumberString.length() == leadingZerosCount) {
+                            leadingZerosCount--;
+                        }
+
+                        lastNumberNew = "0".repeat(leadingZerosCount) + lastNumberNew;
+                    }
+
+                    filenameNew = filenameWithoutExtensions.substring(0, lastNumberMatcher.start(1)) + lastNumberNew +
+                            filenameWithoutExtensions.substring(lastNumberMatcher.end(1));
+
+                } catch (IndexOutOfBoundsException | IllegalStateException exception) {
+                    exception.printStackTrace();
+                } catch (NumberFormatException exception) {
+                    exception.printStackTrace();
+
+                    System.out.println("The (last) number in the filename is too large to increment." + "\n" +
+                            "Added \" (1)\" to the filename instead.");
+
+                    filenameNew += " (1)";
                 }
-
-                filenameNew = filenameWithoutExtensions.substring(0, lastNumberMatcher.start(1)) + lastNumberNew +
-                        filenameWithoutExtensions.substring(lastNumberMatcher.end(1));
-
-            } catch (NumberFormatException exception) {
-                System.out.println("The (last) number in the filename is too large to increment." + "\n" +
-                        "Added \" (1)\" to the filename instead.");
-
-                exception.printStackTrace();
+            } else {
+                System.out.println("No number was found in the filename." + "\n" +
+                        "Added \" (1)\" to the filename." + "\n");
 
                 filenameNew += " (1)";
             }
-        } else {
-            System.out.println("No number was found in the filename." + "\n" +
-                    "Added \" (1)\" to the filename.");
 
-            filenameNew += " (1)";
+            return filenameNew;
+
+        } catch (IllegalArgumentException | IllegalStateException | IndexOutOfBoundsException |
+                 NullPointerException | OutOfMemoryError exception) {
+            exception.printStackTrace();
+
+            return filenameNew + " (1)";
         }
-
-        return filenameNew;
     }
 
-    public String removeFileExtension(String filename, boolean removeAllExtensions) {
+    public String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
         if (!filename.contains(".")) return filename;
 
         String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
 
-        return filename.replaceAll(extensionPattern, "");
+        try {
+            return filename.replaceAll(extensionPattern, "");
+        } catch (PatternSyntaxException patternSyntaxException) {
+            patternSyntaxException.printStackTrace();
+
+            throw new PatternSyntaxException("Could not remove file extension because the regex pattern is invalid",
+                    extensionPattern, -1);
+        }
     }
 
     public String removeFileExtensions(String filename) {
