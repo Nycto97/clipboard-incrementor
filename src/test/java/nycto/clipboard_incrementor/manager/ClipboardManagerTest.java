@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.datatransfer.Clipboard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ClipboardManagerTest {
     private ClipboardManager clipboardManager;
@@ -42,7 +43,13 @@ class ClipboardManagerTest {
 
     private void setClipboardText(String clipboardText) {
         clipboardManager.setClipboardText(clipboardText);
+    }
 
+    @Test
+    void getClipboardText_emptyClipboard() {
+        String actualText = getClipboardText();
+
+        assertNull(actualText);
     }
 
     @Test
