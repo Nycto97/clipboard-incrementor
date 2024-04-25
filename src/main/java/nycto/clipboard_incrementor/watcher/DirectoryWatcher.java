@@ -24,8 +24,6 @@ import nycto.clipboard_incrementor.manager.FilenameManager;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class DirectoryWatcher implements Callable<Void> {
@@ -43,8 +41,6 @@ public class DirectoryWatcher implements Callable<Void> {
             directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
             System.out.println("Watching directory for changes..." + "\n");
-
-            Set<String> processedFilenames = new HashSet<>();
 
             WatchKey watchKey;
 
@@ -70,9 +66,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                         String newFilename = filenameManager.createNewFilename(filename);
 
-                        if (processedFilenames.contains(filename) || clipboardText.equals(newFilename)) {
-                            break;
-                        }
+                        if (clipboardText.equals(newFilename)) break;
 
                         String newFileCreatedText = "New file is created: ";
 
@@ -81,8 +75,6 @@ public class DirectoryWatcher implements Callable<Void> {
                         System.out.println(newFileCreatedText + filename);
 
                         clipboardManager.setClipboardText(newFilename);
-
-                        processedFilenames.add(filename);
                     }
                 }
 
