@@ -66,7 +66,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                         String newFilename = filenameManager.createNewFilename(filename);
 
-                        if (clipboardText.equals(newFilename)) break;
+                        if (clipboardText != null && clipboardText.equals(newFilename)) break;
 
                         String newFileCreatedText = "New file is created: ";
 
