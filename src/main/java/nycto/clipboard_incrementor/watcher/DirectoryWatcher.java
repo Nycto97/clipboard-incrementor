@@ -27,6 +27,9 @@ import java.nio.file.*;
 import java.util.concurrent.Callable;
 
 public class DirectoryWatcher implements Callable<Void> {
+    private static final ClipboardManager clipboardManager = new ClipboardManager(null);
+    private static final FilenameManager filenameManager = new FilenameManager();
+
     private final Path directory;
 
     public DirectoryWatcher(String directoryPath) {
@@ -36,20 +39,17 @@ public class DirectoryWatcher implements Callable<Void> {
     @Override
     public Void call() {
         try {
+            WatchKey watchKey;
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
             directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-
             System.out.println("Watching directory for changes..." + "\n");
-
-            WatchKey watchKey;
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {
                 for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
                     @SuppressWarnings("unchecked")
                     WatchEvent<Path> pathWatchEvent = (WatchEvent<Path>) watchEvent;
-
                     String filename = pathWatchEvent.context().toString();
 
                     if (filename.endsWith(".crdownload")) break;
@@ -58,20 +58,13 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     /* The code up to the break runs twice */
                     if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        ClipboardManager clipboardManager = new ClipboardManager(null);
-
-                        FilenameManager filenameManager = new FilenameManager();
-
                         String clipboardText = clipboardManager.getClipboardText();
-
                         String newFilename = filenameManager.createNewFilename(filename);
 
                         if (clipboardText != null && clipboardText.equals(newFilename)) break;
 
                         String newFileCreatedText = "New file is created: ";
-
                         System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
-
                         System.out.println(newFileCreatedText + filename);
 
                         clipboardManager.setClipboardText(newFilename);
@@ -83,14 +76,12 @@ public class DirectoryWatcher implements Callable<Void> {
 
                 if (!isWatchKeyValid) break;
             }
-        } catch (ClassCastException | ClosedWatchServiceException | IOException | IllegalArgumentException |
-                 NullPointerException | SecurityException | UnsupportedOperationException exception) {
-            exception.printStackTrace();
+        } catch (IOException iOException) {
+            iOException.printStackTrace();
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
 
             try {
-                /* Restore interrupted status */
                 Thread.currentThread().interrupt();
             } catch (SecurityException securityException) {
                 securityException.printStackTrace();

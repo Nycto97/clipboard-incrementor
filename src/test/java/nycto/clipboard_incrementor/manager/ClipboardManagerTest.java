@@ -33,7 +33,6 @@ class ClipboardManagerTest {
     @BeforeEach
     void setup() {
         Clipboard testClipboard = new Clipboard("testClipboard");
-        
         clipboardManager = new ClipboardManager(testClipboard);
     }
 

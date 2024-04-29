@@ -31,31 +31,27 @@ public class FilenameManager {
     }
 
     String incrementLastNumber(String filenameWithoutExtensions) {
-        String filenameNew = filenameWithoutExtensions;
+        String newFilename = filenameWithoutExtensions;
 
         try {
             Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
+            Matcher lastNumberPatternMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
 
-            Matcher lastNumberMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
-
-            if (lastNumberMatcher.find()) {
-                String lastNumberString = lastNumberMatcher.group(1);
-
-                int leadingZerosCount = 0;
+            if (lastNumberPatternMatcher.find()) {
+                String lastNumberString = lastNumberPatternMatcher.group(1);
+                int leadingZeroCount = 0;
 
                 if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
                     Pattern leadingZeroPattern = Pattern.compile("^0+");
+                    Matcher leadingZeroPatternMatcher = leadingZeroPattern.matcher(lastNumberString);
 
-                    Matcher leadingZeroMatcher = leadingZeroPattern.matcher(lastNumberString);
-
-                    if (leadingZeroMatcher.find()) {
-                        leadingZerosCount = leadingZeroMatcher.group().length();
+                    if (leadingZeroPatternMatcher.find()) {
+                        leadingZeroCount = leadingZeroPatternMatcher.group().length();
                     }
                 }
 
                 try {
                     long lastNumber = Long.parseLong(lastNumberString);
-
                     String lastNumberNew = String.valueOf(lastNumber + 1);
 
                     if (lastNumber == Long.MAX_VALUE) {
@@ -67,42 +63,37 @@ public class FilenameManager {
                         lastNumberNew = lastNumberNew.substring(1);
                     }
 
-                    if (leadingZerosCount > 0) {
+                    if (leadingZeroCount > 0) {
                         if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
-                                lastNumberString.length() == leadingZerosCount) {
-                            leadingZerosCount--;
+                                lastNumberString.length() == leadingZeroCount) {
+                            leadingZeroCount--;
                         }
 
-                        lastNumberNew = "0".repeat(leadingZerosCount) + lastNumberNew;
+                        lastNumberNew = "0".repeat(leadingZeroCount) + lastNumberNew;
                     }
 
-                    filenameNew = filenameWithoutExtensions.substring(0, lastNumberMatcher.start(1)) + lastNumberNew +
-                            filenameWithoutExtensions.substring(lastNumberMatcher.end(1));
+                    newFilename =
+                            filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) + lastNumberNew +
+                                    filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
 
-                } catch (IndexOutOfBoundsException | IllegalStateException exception) {
-                    exception.printStackTrace();
                 } catch (NumberFormatException exception) {
                     exception.printStackTrace();
 
+                    newFilename += " (1)";
                     System.out.println("The (last) number in the filename is too large to increment." + "\n" +
                             "Added \" (1)\" to the filename instead.");
-
-                    filenameNew += " (1)";
                 }
             } else {
+                newFilename += " (1)";
                 System.out.println("No number was found in the filename." + "\n" +
                         "Added \" (1)\" to the filename." + "\n");
-
-                filenameNew += " (1)";
             }
 
-            return filenameNew;
+            return newFilename;
 
         } catch (IllegalArgumentException | IllegalStateException | IndexOutOfBoundsException |
                  NullPointerException | OutOfMemoryError exception) {
-            exception.printStackTrace();
-
-            return filenameNew + " (1)";
+            return newFilename + " (1)";
         }
     }
 
@@ -114,8 +105,6 @@ public class FilenameManager {
         try {
             return filename.replaceAll(extensionPattern, "");
         } catch (PatternSyntaxException patternSyntaxException) {
-            patternSyntaxException.printStackTrace();
-
             throw new PatternSyntaxException("Could not remove file extension because the regex pattern is invalid",
                     extensionPattern, -1);
         }

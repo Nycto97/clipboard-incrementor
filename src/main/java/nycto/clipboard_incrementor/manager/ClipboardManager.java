@@ -30,11 +30,8 @@ public class ClipboardManager {
         if (clipboard == null) {
             try {
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
-
                 this.clipboard = toolkit.getSystemClipboard();
             } catch (AWTError | HeadlessException exception) {
-                exception.printStackTrace();
-
                 throw new IllegalStateException("Could not get system clipboard", exception);
             }
         } else {
@@ -44,7 +41,6 @@ public class ClipboardManager {
 
     public String getClipboardText() throws IllegalStateException {
         Transferable clipboardContents = clipboard.getContents(null);
-
         boolean clipboardHasString = (clipboardContents != null) &&
                 clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
 
@@ -52,8 +48,6 @@ public class ClipboardManager {
             try {
                 return (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
             } catch (IOException | UnsupportedFlavorException exception) {
-                exception.printStackTrace();
-
                 throw new IllegalStateException("Could not get clipboard contents", exception);
             }
         } else {
@@ -66,11 +60,8 @@ public class ClipboardManager {
 
         try {
             clipboard.setContents(clipboardTextStringSelection, null);
-
             System.out.println("Clipboard is set to: " + clipboardText + "\n");
         } catch (IllegalStateException illegalStateException) {
-            illegalStateException.printStackTrace();
-
             throw new IllegalStateException("Could not set clipboard text", illegalStateException);
         }
     }

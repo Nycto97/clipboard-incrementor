@@ -26,24 +26,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws IllegalStateException {
-        /* TODO: Change the directory path to the directory you want to watch */
-        String directoryPath = "C:\\users\\myName\\Desktop\\Test";
+    private static String directoryPath;
+    private static DirectoryWatcher directoryWatcher;
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
-        DirectoryWatcher directoryWatcher = new DirectoryWatcher(directoryPath);
+    public static void main(String[] args) {
+        startApplication();
+    }
 
-        ExecutorService executor = Executors.newCachedThreadPool();
+    private static void startApplication() {
+        directoryPath = "C:\\users\\myName\\Desktop\\Test";
+        directoryWatcher = new DirectoryWatcher(directoryPath);
 
-        System.out.println("\n" + "Started a background thread for watching the directory");
+        submitDirectoryWatcher(directoryWatcher);
+    }
 
+    private static void submitDirectoryWatcher(DirectoryWatcher directoryWatcher) throws IllegalStateException {
         try {
-            executor.submit(directoryWatcher);
-
-            System.out.println("After submitting Callable for watching directory" + "\n");
+            executorService.submit(directoryWatcher);
         } catch (NullPointerException | RejectedExecutionException exception) {
-            exception.printStackTrace();
-
-            throw new IllegalStateException("Could not submit Callable for watching directory", exception);
+            throw new IllegalStateException("Could not submit Callable for watching the directory", exception);
         }
     }
 }
