@@ -43,7 +43,7 @@ public class DirectoryWatcher implements Callable<Void> {
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
             directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("Watching directory for changes..." + "\n");
+            System.out.println("Watching " + directory + " for changes..." + "\n");
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {
