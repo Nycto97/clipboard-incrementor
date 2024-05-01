@@ -79,8 +79,6 @@ public class DirectoryWatcher implements Callable<Void> {
         } catch (IOException iOException) {
             iOException.printStackTrace();
         } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-
             try {
                 Thread.currentThread().interrupt();
             } catch (SecurityException securityException) {

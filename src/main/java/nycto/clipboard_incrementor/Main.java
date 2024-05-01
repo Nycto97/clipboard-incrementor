@@ -21,6 +21,7 @@ package nycto.clipboard_incrementor;
 
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -31,15 +32,39 @@ public class Main {
     private static DirectoryWatcher directoryWatcher;
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
+    /**
+     * Scanner object for reading "standard" input from the console.
+     */
+    private static final Scanner stdinScanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         startApplication();
     }
 
+    private static void processConsoleInput() {
+        scanLineLoop:
+        while (stdinScanner.hasNext()) {
+            String inputCleaned = stdinScanner.nextLine().toLowerCase().trim();
+
+            switch (inputCleaned) {
+                case "exit", "stop", "quit" -> {
+                    stopApplication();
+
+                    break scanLineLoop;
+                }
+                default -> System.out.println("Unknown command: " + inputCleaned);
+            }
+        }
+    }
+
     private static void startApplication() {
+        System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
+                "..." + "\n");
         directoryPath = "C:\\users\\myName\\Desktop\\Test";
         directoryWatcher = new DirectoryWatcher(directoryPath);
 
         submitDirectoryWatcher(directoryWatcher);
+        processConsoleInput();
     }
 
     /**
