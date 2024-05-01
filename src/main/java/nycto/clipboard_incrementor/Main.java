@@ -43,7 +43,7 @@ public class Main {
 
     private static void processConsoleInput() {
         scanLineLoop:
-        while (stdinScanner.hasNext()) {
+        while (stdinScanner.hasNextLine()) {
             String inputCleaned = stdinScanner.nextLine().toLowerCase().trim();
 
             switch (inputCleaned) {
