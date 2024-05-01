@@ -24,6 +24,7 @@ import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static String directoryPath;
@@ -39,6 +40,26 @@ public class Main {
         directoryWatcher = new DirectoryWatcher(directoryPath);
 
         submitDirectoryWatcher(directoryWatcher);
+    }
+
+    /**
+     * Stops the application by shutting down the ExecutorService.
+     *
+     * @see 
+     * <a href="https://www.baeldung.com/java-executor-service-tutorial#shutting">Shutting Down an ExecutorService</a>
+     */
+    private static void stopApplication() {
+        Main.executorService.shutdown();
+
+        try {
+            if (!Main.executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                Main.executorService.shutdownNow();
+            }
+        } catch (InterruptedException interruptedException) {
+            Main.executorService.shutdownNow();
+        }
+
+        System.out.println("Stopping the application...");
     }
 
     private static void submitDirectoryWatcher(DirectoryWatcher directoryWatcher) throws IllegalStateException {
