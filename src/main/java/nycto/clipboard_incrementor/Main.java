@@ -21,6 +21,7 @@ package nycto.clipboard_incrementor;
 
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 
+import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -61,7 +62,7 @@ public class Main {
         System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
                 "..." + "\n");
         directoryPath = "C:\\users\\myName\\Desktop\\Test";
-        directoryWatcher = new DirectoryWatcher(directoryPath);
+        directoryWatcher = new DirectoryWatcher(Path.of(directoryPath));
 
         submitDirectoryWatcher(directoryWatcher);
         processConsoleInput();

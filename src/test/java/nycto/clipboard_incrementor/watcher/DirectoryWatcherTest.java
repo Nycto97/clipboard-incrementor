@@ -22,6 +22,8 @@ package nycto.clipboard_incrementor.watcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -30,7 +32,7 @@ class DirectoryWatcherTest {
 
     @BeforeAll
     static void setup() {
-        directoryWatcher = new DirectoryWatcher("C:\\users\\myName\\Desktop\\Test");
+        directoryWatcher = new DirectoryWatcher(Path.of("C:\\users\\myName\\Desktop\\Test"));
     }
 
     private String createDivider(int length) {

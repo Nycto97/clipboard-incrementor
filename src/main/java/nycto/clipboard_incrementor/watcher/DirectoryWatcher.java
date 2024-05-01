@@ -30,10 +30,10 @@ public class DirectoryWatcher implements Callable<Void> {
     private static final ClipboardManager clipboardManager = new ClipboardManager(null);
     private static final FilenameManager filenameManager = new FilenameManager();
 
-    private final Path directory;
+    private Path directory;
 
-    public DirectoryWatcher(String directoryPath) {
-        this.directory = Path.of(directoryPath);
+    public DirectoryWatcher(Path directoryPath) {
+        this.directory = directoryPath;
     }
 
     @Override
@@ -95,5 +95,13 @@ public class DirectoryWatcher implements Callable<Void> {
         }
 
         return "- ".repeat(length) + "\n";
+    }
+
+    public Path getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(Path directory) {
+        this.directory = directory;
     }
 }
