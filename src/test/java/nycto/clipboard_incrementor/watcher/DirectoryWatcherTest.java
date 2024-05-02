@@ -19,26 +19,13 @@
 
 package nycto.clipboard_incrementor.watcher;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-
+import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.createDivider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DirectoryWatcherTest {
-    private static DirectoryWatcher directoryWatcher;
-
-    @BeforeAll
-    static void setup() {
-        directoryWatcher = new DirectoryWatcher(Path.of("C:\\users\\myName\\Desktop\\Test"));
-    }
-
-    private String createDivider(int length) {
-        return directoryWatcher.createDivider(length);
-    }
-
     @Test
     void call() {
     }

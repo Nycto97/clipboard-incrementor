@@ -24,13 +24,16 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class FilenameManager {
-    public String createNewFilename(String filename) {
+    private FilenameManager() {
+    }
+
+    public static String createNewFilename(String filename) {
         String filenameWithoutExtensions = removeFileExtensions(filename);
 
         return incrementLastNumber(filenameWithoutExtensions);
     }
 
-    String incrementLastNumber(String filenameWithoutExtensions) {
+    static String incrementLastNumber(String filenameWithoutExtensions) {
         String newFilename = filenameWithoutExtensions;
 
         try {
@@ -77,8 +80,6 @@ public class FilenameManager {
                                     filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
 
                 } catch (NumberFormatException exception) {
-                    exception.printStackTrace();
-
                     newFilename += " (1)";
                     System.out.println("The (last) number in the filename is too large to increment." + "\n" +
                             "Added \" (1)\" to the filename instead.");
@@ -97,7 +98,7 @@ public class FilenameManager {
         }
     }
 
-    String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
+    static String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
         if (!filename.contains(".")) return filename;
 
         String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
@@ -110,7 +111,7 @@ public class FilenameManager {
         }
     }
 
-    String removeFileExtensions(String filename) {
+    static String removeFileExtensions(String filename) {
         if (!filename.contains(".")) return filename;
 
         return removeFileExtension(filename, true);

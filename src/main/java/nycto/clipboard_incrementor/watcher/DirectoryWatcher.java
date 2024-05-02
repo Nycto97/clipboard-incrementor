@@ -19,31 +19,36 @@
 
 package nycto.clipboard_incrementor.watcher;
 
-import nycto.clipboard_incrementor.manager.ClipboardManager;
-import nycto.clipboard_incrementor.manager.FilenameManager;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.Callable;
 
+import static nycto.clipboard_incrementor.manager.ClipboardManager.getClipboardText;
+import static nycto.clipboard_incrementor.manager.ClipboardManager.setClipboardText;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
+import static nycto.clipboard_incrementor.manager.FilenameManager.createNewFilename;
+
 public class DirectoryWatcher implements Callable<Void> {
-    private static final ClipboardManager clipboardManager = new ClipboardManager(null);
-    private static final FilenameManager filenameManager = new FilenameManager();
+    public DirectoryWatcher() {
+    }
 
-    private Path directory;
+    static String createDivider(int length) throws IllegalArgumentException {
+        if (length < 0) {
+            throw new IllegalArgumentException("Length can't be a negative number");
+        }
 
-    public DirectoryWatcher(Path directoryPath) {
-        this.directory = directoryPath;
+        return "- ".repeat(length) + "\n";
     }
 
     @Override
     public Void call() {
         try {
+            Path directoryPath = getDirectoryPath();
             WatchKey watchKey;
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
-            directory.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("Watching " + directory + " for changes..." + "\n");
+            directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+            System.out.println("Watching " + directoryPath + " for changes..." + "\n");
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {
@@ -58,8 +63,8 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     /* The code up to the break runs twice */
                     if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        String clipboardText = clipboardManager.getClipboardText();
-                        String newFilename = filenameManager.createNewFilename(filename);
+                        String clipboardText = getClipboardText();
+                        String newFilename = createNewFilename(filename);
 
                         if (clipboardText != null && clipboardText.equals(newFilename)) break;
 
@@ -67,7 +72,7 @@ public class DirectoryWatcher implements Callable<Void> {
                         System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
                         System.out.println(newFileCreatedText + filename);
 
-                        clipboardManager.setClipboardText(newFilename);
+                        setClipboardText(newFilename);
                     }
                 }
 
@@ -76,32 +81,16 @@ public class DirectoryWatcher implements Callable<Void> {
 
                 if (!isWatchKeyValid) break;
             }
-        } catch (IOException iOException) {
-            iOException.printStackTrace();
         } catch (InterruptedException interruptedException) {
             try {
                 Thread.currentThread().interrupt();
             } catch (SecurityException securityException) {
                 securityException.printStackTrace();
             }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
 
         return null;
-    }
-
-    String createDivider(int length) throws IllegalArgumentException {
-        if (length < 0) {
-            throw new IllegalArgumentException("Length can't be a negative number");
-        }
-
-        return "- ".repeat(length) + "\n";
-    }
-
-    public Path getDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(Path directory) {
-        this.directory = directory;
     }
 }

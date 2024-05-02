@@ -24,22 +24,20 @@ import java.awt.datatransfer.*;
 import java.io.IOException;
 
 public class ClipboardManager {
-    private final Clipboard clipboard;
+    private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-    public ClipboardManager(Clipboard clipboard) throws IllegalStateException {
-        if (clipboard == null) {
-            try {
-                Toolkit toolkit = Toolkit.getDefaultToolkit();
-                this.clipboard = toolkit.getSystemClipboard();
-            } catch (AWTError | HeadlessException exception) {
-                throw new IllegalStateException("Could not get system clipboard", exception);
-            }
-        } else {
-            this.clipboard = clipboard;
-        }
+    private ClipboardManager() {
     }
 
-    public String getClipboardText() throws IllegalStateException {
+    static Clipboard getClipboard() {
+        return clipboard;
+    }
+
+    static void setClipboard(Clipboard clipboard) {
+        ClipboardManager.clipboard = clipboard;
+    }
+
+    public static String getClipboardText() throws IllegalStateException {
         Transferable clipboardContents = clipboard.getContents(null);
         boolean clipboardHasString = (clipboardContents != null) &&
                 clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
@@ -55,7 +53,7 @@ public class ClipboardManager {
         }
     }
 
-    public void setClipboardText(String clipboardText) throws IllegalStateException {
+    public static void setClipboardText(String clipboardText) throws IllegalStateException {
         StringSelection clipboardTextStringSelection = new StringSelection(clipboardText);
 
         try {

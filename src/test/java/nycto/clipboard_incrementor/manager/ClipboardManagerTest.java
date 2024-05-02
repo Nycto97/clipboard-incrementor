@@ -24,24 +24,26 @@ import org.junit.jupiter.api.Test;
 
 import java.awt.datatransfer.Clipboard;
 
+import static nycto.clipboard_incrementor.manager.ClipboardManager.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ClipboardManagerTest {
-    private ClipboardManager clipboardManager;
-
     @BeforeEach
     void setup() {
         Clipboard testClipboard = new Clipboard("testClipboard");
-        clipboardManager = new ClipboardManager(testClipboard);
+        setClipboard(testClipboard);
     }
 
-    private String getClipboardText() {
-        return clipboardManager.getClipboardText();
-    }
+    @Test
+    void setAndGetClipboard() {
+        Clipboard expectedClipboard = new Clipboard("expectedClipboard");
 
-    private void setClipboardText(String clipboardText) {
-        clipboardManager.setClipboardText(clipboardText);
+        setClipboard(expectedClipboard);
+
+        Clipboard actualClipboard = getClipboard();
+
+        assertEquals(expectedClipboard, actualClipboard);
     }
 
     @Test

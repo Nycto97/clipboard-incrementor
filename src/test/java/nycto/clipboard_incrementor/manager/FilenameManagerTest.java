@@ -19,37 +19,14 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static nycto.clipboard_incrementor.manager.FilenameManager.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FilenameManagerTest {
-    private static FilenameManager filenameManager;
-
-    @BeforeAll
-    static void setup() {
-        filenameManager = new FilenameManager();
-    }
-
-    private String createNewFilename(String filename) {
-        return filenameManager.createNewFilename(filename);
-    }
-
-    private String incrementLastNumber(String filenameWithoutExtensions) {
-        return filenameManager.incrementLastNumber(filenameWithoutExtensions);
-    }
-
-    private String removeFileExtension(String filename, boolean removeAllExtensions) {
-        return filenameManager.removeFileExtension(filename, removeAllExtensions);
-    }
-
-    private String removeFileExtensions(String filename) {
-        return filenameManager.removeFileExtensions(filename);
-    }
-
     @Test
-    void createNewFilename() {
+    void createNewFilename_test() {
         assertEquals("Cool Car 24", createNewFilename("Cool Car 23.jpg"));
         assertEquals("cute cat (9)", createNewFilename("cute cat (8).png"));
         assertEquals("14538210_1324532_1324", createNewFilename("14538210_1324532_1323.jpg"));
@@ -116,7 +93,7 @@ class FilenameManagerTest {
     }
 
     @Test
-    void incrementLastNumber() {
+    void incrementLastNumber_test() {
         assertEquals("Cool Car 24", incrementLastNumber("Cool Car 23"));
         assertEquals("cute cat (9)", incrementLastNumber("cute cat (8)"));
         assertEquals("14538210_1324532_1324", incrementLastNumber("14538210_1324532_1323"));

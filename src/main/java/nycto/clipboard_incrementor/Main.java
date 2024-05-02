@@ -22,49 +22,29 @@ package nycto.clipboard_incrementor;
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 
 import java.nio.file.Path;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
-    private static String directoryPath;
-    private static DirectoryWatcher directoryWatcher;
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleInput;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.setDirectoryPath;
 
-    /**
-     * Scanner object for reading "standard" input from the console.
-     */
-    private static final Scanner stdinScanner = new Scanner(System.in);
+public class Main {
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
         startApplication();
     }
 
-    private static void processConsoleInput() {
-        scanLineLoop:
-        while (stdinScanner.hasNextLine()) {
-            String inputCleaned = stdinScanner.nextLine().toLowerCase().trim();
-
-            switch (inputCleaned) {
-                case "exit", "stop", "quit" -> {
-                    stopApplication();
-
-                    break scanLineLoop;
-                }
-                default -> System.out.println("Unknown command: " + inputCleaned);
-            }
-        }
-    }
-
     private static void startApplication() {
-        System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
+    	System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
                 "..." + "\n");
-        directoryPath = "C:\\users\\myName\\Desktop\\Test";
-        directoryWatcher = new DirectoryWatcher(Path.of(directoryPath));
+        String directory = "C:\\users\\myName\\Desktop\\Test";
+        Path directoryPath = Path.of(directory);
 
-        submitDirectoryWatcher(directoryWatcher);
+        setDirectoryPath(directoryPath);
+        submitDirectoryWatcher();
         processConsoleInput();
     }
 
@@ -74,23 +54,23 @@ public class Main {
      * @see 
      * <a href="https://www.baeldung.com/java-executor-service-tutorial#shutting">Shutting Down an ExecutorService</a>
      */
-    private static void stopApplication() {
-        Main.executorService.shutdown();
+    public static void stopApplication() {
+        executorService.shutdown();
 
         try {
-            if (!Main.executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                Main.executorService.shutdownNow();
+            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                executorService.shutdownNow();
             }
         } catch (InterruptedException interruptedException) {
-            Main.executorService.shutdownNow();
+            executorService.shutdownNow();
         }
 
         System.out.println("Stopping the application...");
     }
 
-    private static void submitDirectoryWatcher(DirectoryWatcher directoryWatcher) throws IllegalStateException {
+    private static void submitDirectoryWatcher() throws IllegalStateException {
         try {
-            executorService.submit(directoryWatcher);
+            executorService.submit(new DirectoryWatcher());
         } catch (NullPointerException | RejectedExecutionException exception) {
             throw new IllegalStateException("Could not submit Callable for watching the directory", exception);
         }
