@@ -40,16 +40,23 @@ public class ConsoleManager {
     public static void processConsoleInput() {
         scanLineLoop:
         while (stdinScanner.hasNextLine()) {
-            String inputCleaned = readConsoleInput().toLowerCase();
+            String commandLowerCase;
 
-            switch (inputCleaned) {
+            String consoleInput = readConsoleInput();
+            List<String> consoleInputParts = splitOnSpacesIgnoringQuotes(consoleInput);
+
+            if (consoleInputParts.isEmpty()) continue;
+
+            commandLowerCase = consoleInputParts.getFirst().toLowerCase();
+
+            switch (commandLowerCase) {
                 case "dir", "directory" -> System.out.println("Currently watching: " + getDirectoryPath());
                 case "exit", "stop", "quit" -> {
                     stopApplication();
 
                     break scanLineLoop;
                 }
-                default -> System.err.println("Unknown command: " + inputCleaned);
+                default -> System.err.println("Unknown command: " + commandLowerCase);
             }
         }
     }
