@@ -22,6 +22,7 @@ package nycto.clipboard_incrementor.manager;
 import java.util.Scanner;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
 
 public class ConsoleManager {
     /**
@@ -38,6 +39,7 @@ public class ConsoleManager {
             String inputCleaned = readConsoleInput().toLowerCase();
 
             switch (inputCleaned) {
+                case "dir", "directory" -> System.out.println("Currently watching: " + getDirectoryPath());
                 case "exit", "stop", "quit" -> {
                     stopApplication();
 
