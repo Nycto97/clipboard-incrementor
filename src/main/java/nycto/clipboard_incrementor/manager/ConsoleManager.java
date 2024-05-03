@@ -19,7 +19,11 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
@@ -52,5 +56,24 @@ public class ConsoleManager {
 
     private static String readConsoleInput() {
         return stdinScanner.nextLine().trim();
+    }
+
+    /**
+     * Splits a string on spaces, ignoring spaces inside quotes, to preserve quoted strings.
+     * <p>
+     * E.g. changedir "C:/users/my name/Desktop/Test Folder" -> ["changedir", "C:/users/my name/Desktop/Test Folder"]
+     *
+     * @param input The string to split.
+     * @return A list of parts.
+     */
+    private static List<String> splitOnSpacesIgnoringQuotes(String input) {
+        Pattern pattern = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"");
+        Matcher matcher = pattern.matcher(input);
+
+        List<String> parts = new ArrayList<>();
+
+        while (matcher.find()) parts.add(matcher.group());
+
+        return parts;
     }
 }
