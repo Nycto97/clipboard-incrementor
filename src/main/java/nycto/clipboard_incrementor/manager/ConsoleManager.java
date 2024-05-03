@@ -41,13 +41,22 @@ public class ConsoleManager {
         scanLineLoop:
         while (stdinScanner.hasNextLine()) {
             String commandLowerCase;
+            String commandArgument = null;
 
             String consoleInput = readConsoleInput();
             List<String> consoleInputParts = splitOnSpacesIgnoringQuotes(consoleInput);
 
             if (consoleInputParts.isEmpty()) continue;
 
+            if (consoleInputParts.size() > 2) {
+                System.out.println("Too many arguments provided");
+
+                continue;
+            }
+
             commandLowerCase = consoleInputParts.getFirst().toLowerCase();
+
+            if (consoleInputParts.size() == 2) commandArgument = consoleInputParts.get(1);
 
             switch (commandLowerCase) {
                 case "dir", "directory" -> System.out.println("Currently watching: " + getDirectoryPath());
