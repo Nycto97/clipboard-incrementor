@@ -70,7 +70,7 @@ public class ConsoleManager {
         }
     }
 
-    private static String readConsoleInput() {
+    public static String readConsoleInput() {
         return stdinScanner.nextLine().trim();
     }
 

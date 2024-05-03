@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
+import static nycto.clipboard_incrementor.manager.ConsoleManager.readConsoleInput;
+
 public class DirectoryManager {
     private static Path directoryPath;
 
@@ -47,6 +50,27 @@ public class DirectoryManager {
         } catch (SecurityException securityException) {
             throw new IllegalStateException("Permission denied to access directory: " + directoryPath,
                     securityException);
+        }
+    }
+
+    public static void handleNonExistingDirectory(Path directoryPath, String suffix) {
+        System.out.println("Directory " + directoryPath + " does not exist." + "\n" + "Would you like to create it? (yes/no)");
+
+        String consoleInputLowerCase = readConsoleInput().toLowerCase();
+
+        while (!consoleInputLowerCase.equals("y") && !consoleInputLowerCase.equals("yes") &&
+                !consoleInputLowerCase.equals("n") && !consoleInputLowerCase.equals("no")) {
+            System.out.println("Invalid input. Please enter 'yes' or 'no'");
+
+            consoleInputLowerCase = readConsoleInput().toLowerCase();
+        }
+
+        if (consoleInputLowerCase.equals("y") || consoleInputLowerCase.equals("yes")) {
+            createDirectory(directoryPath);
+            setDirectoryPath(directoryPath);
+            submitDirectoryWatcher();
+        } else {
+            System.out.println("Directory not created." + "\n" + suffix);
         }
     }
 

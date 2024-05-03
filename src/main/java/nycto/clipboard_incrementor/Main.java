@@ -22,13 +22,10 @@ package nycto.clipboard_incrementor;
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 
 import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleInput;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.setDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 
 public class Main {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -43,8 +40,14 @@ public class Main {
         String directory = "C:\\users\\myName\\Desktop\\Test";
         Path directoryPath = Path.of(directory);
 
-        setDirectoryPath(directoryPath);
-        submitDirectoryWatcher();
+        if (directoryExists(directoryPath)) {
+            setDirectoryPath(directoryPath);
+            submitDirectoryWatcher();
+        } else {
+            handleNonExistingDirectory(directoryPath, "Please update the directory path to an existing" +
+                    " directory using the 'changedir' command or stop the application with the 'stop' command.");
+        }
+
         processConsoleInput();
     }
 
