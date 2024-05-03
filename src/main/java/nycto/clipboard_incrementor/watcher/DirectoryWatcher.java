@@ -29,6 +29,8 @@ import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryP
 import static nycto.clipboard_incrementor.manager.FilenameManager.createNewFilename;
 
 public class DirectoryWatcher implements Callable<Void> {
+    private static WatchService watchService;
+
     public DirectoryWatcher() {
     }
 
@@ -40,18 +42,37 @@ public class DirectoryWatcher implements Callable<Void> {
         return "- ".repeat(length) + "\n";
     }
 
+    public static void closeWatchService() {
+        if (watchService != null) {
+            try {
+                watchService.close();
+                System.out.println("Successfully closed watch service");
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    }
+
+    private static WatchService createWatchService() throws IOException {
+        return FileSystems.getDefault().newWatchService();
+    }
+
     @Override
     public Void call() {
         try {
-            Path directoryPath = getDirectoryPath();
             WatchKey watchKey;
-            WatchService watchService = FileSystems.getDefault().newWatchService();
+            Path directoryPath = getDirectoryPath();
+            watchService = createWatchService();
 
             directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
             System.out.println("Watching " + directoryPath + " for changes..." + "\n");
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {
+                if (Thread.currentThread().isInterrupted()) {
+                    return null;
+                }
+
                 for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
                     @SuppressWarnings("unchecked")
                     WatchEvent<Path> pathWatchEvent = (WatchEvent<Path>) watchEvent;

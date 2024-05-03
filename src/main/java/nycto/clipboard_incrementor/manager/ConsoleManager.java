@@ -19,6 +19,8 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,7 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
+import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 
 public class ConsoleManager {
     /**
@@ -59,6 +62,27 @@ public class ConsoleManager {
             if (consoleInputParts.size() == 2) commandArgument = consoleInputParts.get(1);
 
             switch (commandLowerCase) {
+                case "changedir", "changedirectory" -> {
+                    if (commandArgument == null) {
+                        System.err.println("No directory path provided");
+
+                        continue;
+                    }
+
+                    try {
+                        Path commandParameterPath = Path.of(commandArgument);
+
+                        if (directoryExists(commandParameterPath)) {
+                            setDirectoryPath(commandParameterPath);
+                            submitDirectoryWatcher();
+                        } else {
+                            handleNonExistingDirectory(commandParameterPath, "Continuing to watch" +
+                                    " " + getDirectoryPath() + " for changes..." + "\n");
+                        }
+                    } catch (InvalidPathException invalidPathException) {
+                        System.err.println("Invalid directory path format: " + commandArgument);
+                    }
+                }
                 case "dir", "directory" -> System.out.println("Currently watching: " + getDirectoryPath());
                 case "exit", "stop", "quit" -> {
                     stopApplication();

@@ -26,9 +26,11 @@ import java.util.concurrent.*;
 
 import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleInput;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
+import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.closeWatchService;
 
 public class Main {
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static Future<?> future = null;
 
     public static void main(String[] args) {
         startApplication();
@@ -71,9 +73,17 @@ public class Main {
         System.out.println("Stopping the application...");
     }
 
-    private static void submitDirectoryWatcher() throws IllegalStateException {
+    public static void submitDirectoryWatcher() throws IllegalStateException {
+        /* Cancel the future, if one exists and is not completed/done, before submitting a new Callable */
+        if (future != null && !future.isDone()) {
+            future.cancel(true);
+        }
+
+        /* Close the watch service, if one exists, before submitting a new Callable */
+        closeWatchService();
+
         try {
-            executorService.submit(new DirectoryWatcher());
+            future = executorService.submit(new DirectoryWatcher());
         } catch (NullPointerException | RejectedExecutionException exception) {
             throw new IllegalStateException("Could not submit Callable for watching the directory", exception);
         }
