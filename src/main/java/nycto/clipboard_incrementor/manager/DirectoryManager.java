@@ -19,12 +19,35 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class DirectoryManager {
     private static Path directoryPath;
 
     private DirectoryManager() {
+    }
+
+    private static void createDirectory(Path directoryPath) {
+        try {
+            Files.createDirectories(directoryPath);
+            System.out.println("Successfully created directory: " + directoryPath + "\n");
+        } catch (IOException ioException) {
+            throw new IllegalStateException("Could not create directory: " + directoryPath, ioException);
+        } catch (SecurityException securityException) {
+            throw new IllegalStateException("Permission denied to create directory: " + directoryPath,
+                    securityException);
+        }
+    }
+
+    public static boolean directoryExists(Path directoryPath) {
+        try {
+            return Files.exists(directoryPath);
+        } catch (SecurityException securityException) {
+            throw new IllegalStateException("Permission denied to access directory: " + directoryPath,
+                    securityException);
+        }
     }
 
     public static Path getDirectoryPath() {
