@@ -106,6 +106,12 @@ public class Main {
         } catch (InterruptedException interruptedException) {
             executorService.shutdownNow();
         }
+
+        if (executorService.isShutdown()) {
+            System.out.println("Successfully shut down ExecutorService");
+        } else {
+            System.err.println("Could not shut down ExecutorService");
+        }
     }
 
     public static void submitDirectoryWatcher() throws IllegalStateException {
