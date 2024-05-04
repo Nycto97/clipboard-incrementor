@@ -24,6 +24,7 @@ import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 import java.nio.file.Path;
 import java.util.concurrent.*;
 
+import static nycto.clipboard_incrementor.manager.ConsoleManager.closeStdinScanner;
 import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleInput;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.closeWatchService;
@@ -75,12 +76,19 @@ public class Main {
     }
 
     /**
-     * Stops the application by shutting down the ExecutorService.
+     * Stops the application by closing the standard input scanner, closing the watch service,
+     * canceling the future and shutting down the ExecutorService.
      *
      * @see 
      * <a href="https://www.baeldung.com/java-executor-service-tutorial#shutting">Shutting Down an ExecutorService</a>
      */
     public static void stopApplication() {
+        System.out.println("Stopping application...");
+
+        closeStdinScanner();
+        closeWatchService();
+        cancelFuture();
+
         executorService.shutdown();
 
         try {
@@ -90,8 +98,6 @@ public class Main {
         } catch (InterruptedException interruptedException) {
             executorService.shutdownNow();
         }
-
-        System.out.println("Stopping the application...");
     }
 
     public static void submitDirectoryWatcher() throws IllegalStateException {
