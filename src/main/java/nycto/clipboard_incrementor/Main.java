@@ -47,10 +47,19 @@ public class Main {
 
         return "- ".repeat(length) + System.lineSeparator();
     }
+    
+    private static void printStartBanner() {
+        System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");
+        System.out.println("- - - - - - - - Clipboard Incrementor - - - - - - - -");
+        System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");
+        System.out.println("- - - - Type 'help' to see available commands - - - -");
+        System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");
+        System.out.println();
+    }
 
     private static void startApplication() {
-        System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
-                "..." + System.lineSeparator());
+        printStartBanner();
+
         String directory = "C:\\users\\myName\\Desktop\\Test";
         Path directoryPath = Path.of(directory);
 
