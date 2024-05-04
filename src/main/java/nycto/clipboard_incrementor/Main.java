@@ -57,6 +57,15 @@ public class Main {
         return "- ".repeat(length) + System.lineSeparator();
     }
     
+    public static String getOperatingSystemName() {
+        try {
+            String osName = System.getProperty("os.name");
+            return osName != null ? osName : "";
+        } catch (SecurityException securityException) {
+            return "";
+        }
+    }
+
     private static void printStartBanner() {
         System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");
         System.out.println("- - - - - - - - Clipboard Incrementor - - - - - - - -");
