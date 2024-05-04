@@ -47,7 +47,7 @@ public class Main {
             submitDirectoryWatcher();
         } else {
             handleNonExistingDirectory(directoryPath, "Please update the directory path to an existing" +
-                    " directory using the 'changedir' command or stop the application with the 'stop' command.");
+                    " directory using the 'change' command or stop the application with the 'stop' command.");
         }
 
         processConsoleInput();
