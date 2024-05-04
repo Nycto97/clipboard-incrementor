@@ -54,6 +54,11 @@ public class ConsoleManager {
         }
     }
 
+    public static void closeStdinScanner() {
+        stdinScanner.close();
+        System.out.println("Successfully closed standard input scanner");
+    }
+
     public static void processConsoleInput() {
         scanLineLoop:
         while (stdinScanner.hasNextLine()) {
