@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Scanner;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.changeDirectory;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.printCurrentDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 
 public class ConsoleManager {
     private static final List<Command> commands = List.of(
             new Command("change", "Change the directory to watch for new files", List.of("c")),
             new Command("print", "Print the path of the currently watched directory", List.of("p")),
+            new Command("open", "Open the directory that is currently being watched", List.of("o")),
             new Command("help", "Show the available commands", List.of("h", "commands")),
             new Command("stop", "Stop the application", List.of("s", "exit", "quit"))
     );
@@ -79,6 +79,7 @@ public class ConsoleManager {
                 switch (commandToExecute) {
                     case "change" -> changeDirectory();
                     case "print" -> printCurrentDirectoryPath();
+                    case "open" -> openCurrentDirectory();
                     case "help" -> printCommands();
                     case "stop" -> {
                         stopApplication();

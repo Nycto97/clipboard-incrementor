@@ -19,11 +19,14 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
+import static nycto.clipboard_incrementor.Main.getOperatingSystemName;
 import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
 import static nycto.clipboard_incrementor.manager.ConsoleManager.readConsoleInput;
 
@@ -102,6 +105,42 @@ public class DirectoryManager {
             submitDirectoryWatcher();
         } else {
             System.out.println("Directory not created." + System.lineSeparator() + suffix);
+        }
+    }
+
+    static void openCurrentDirectory() {
+        if (!Desktop.isDesktopSupported()) {
+            String osName = getOperatingSystemName();
+            String osNameSuffix = osName.isEmpty() ? "" : " (" + osName + ")";
+
+            System.err.println("Desktop class is not supported on this platform" + osNameSuffix + System.lineSeparator() +
+                    "Could not open directory: " + getDirectoryPath());
+            return;
+        }
+
+        Desktop desktop = Desktop.getDesktop();
+
+        if (!desktop.isSupported(Desktop.Action.OPEN)) {
+            System.err.println("Desktop class does not support the OPEN action" + System.lineSeparator() +
+                    "Could not open directory: " + getDirectoryPath());
+            return;
+        }
+
+        Path directoryPath = getDirectoryPath();
+
+        if (directoryPath == null) {
+            System.err.println("Directory path is not configured yet" + System.lineSeparator() + "Please configure " +
+                    "the directory path using the 'change' command before trying to open the current directory");
+            return;
+        }
+
+        try {
+            desktop.open(new File(directoryPath.toString()));
+            System.out.println("Successfully opened directory: " + directoryPath);
+        } catch (IOException ioException) {
+            System.err.println("Could not open directory: " + getDirectoryPath());
+        } catch (SecurityException securityException) {
+            System.err.println("Permission denied to open directory: " + getDirectoryPath());
         }
     }
 
