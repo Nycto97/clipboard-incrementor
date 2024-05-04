@@ -21,14 +21,12 @@ package nycto.clipboard_incrementor.manager;
 
 import nycto.clipboard_incrementor.command.Command;
 
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
-import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.changeDirectory;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.printCurrentDirectoryPath;
 
 public class ConsoleManager {
     private static final List<Command> commands = List.of(
@@ -63,48 +61,8 @@ public class ConsoleManager {
 
             if (isInputCommandOrAlias) {
                 switch (commandToExecute) {
-                    case "change" -> {
-                        System.out.println("Enter the new directory path:");
-                        String newDirectory = readConsoleInput();
-                        Path newDirectoryPath = null;
-
-                        while (newDirectory.isEmpty()) {
-                            System.err.println("Directory path cannot be empty. Please enter a valid directory " +
-                                    "path:");
-                            newDirectory = readConsoleInput();
-                        }
-
-                        try {
-                            newDirectoryPath = Path.of(newDirectory);
-                        } catch (InvalidPathException invalidPathException) {
-                            System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() + "Please enter a valid directory path:");
-                        }
-
-                        while (newDirectoryPath == null) {
-                            newDirectory = readConsoleInput();
-
-                            while (newDirectory.isEmpty()) {
-                                System.err.println("Directory path cannot be empty. Please enter a valid directory " +
-                                        "path:");
-                                newDirectory = readConsoleInput();
-                            }
-
-                            try {
-                                newDirectoryPath = Path.of(newDirectory);
-                            } catch (InvalidPathException invalidPathException) {
-                                System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() + "Please enter a valid directory path:");
-                            }
-                        }
-
-                        if (directoryExists(newDirectoryPath)) {
-                            setDirectoryPath(newDirectoryPath);
-                            submitDirectoryWatcher();
-                        } else {
-                            handleNonExistingDirectory(newDirectoryPath, "Continuing to watch" +
-                                    " " + getDirectoryPath() + " for changes..." + System.lineSeparator());
-                        }
-                    }
-                    case "print" -> System.out.println("Currently watching: " + getDirectoryPath());
+                    case "change" -> changeDirectory();
+                    case "print" -> printCurrentDirectoryPath();
                     case "stop" -> {
                         stopApplication();
 

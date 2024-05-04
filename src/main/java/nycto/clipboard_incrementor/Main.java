@@ -36,6 +36,18 @@ public class Main {
         startApplication();
     }
 
+    private static void cancelFuture() {
+        if (future != null && !future.isDone()) future.cancel(true);
+    }
+
+    public static String createDivider(int length) throws IllegalArgumentException {
+        if (length < 0) {
+            throw new IllegalArgumentException("Length can't be a negative number");
+        }
+
+        return "- ".repeat(length) + System.lineSeparator();
+    }
+
     private static void startApplication() {
         System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
                 "..." + System.lineSeparator());
@@ -75,10 +87,7 @@ public class Main {
 
     public static void submitDirectoryWatcher() throws IllegalStateException {
         /* Cancel the future, if one exists and is not completed/done, before submitting a new Callable */
-        if (future != null && !future.isDone()) {
-            future.cancel(true);
-        }
-
+        cancelFuture();
         /* Close the watch service, if one exists, before submitting a new Callable */
         closeWatchService();
 

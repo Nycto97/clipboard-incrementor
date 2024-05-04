@@ -21,32 +21,8 @@ package nycto.clipboard_incrementor.watcher;
 
 import org.junit.jupiter.api.Test;
 
-import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.createDivider;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 class DirectoryWatcherTest {
     @Test
     void call() {
-    }
-
-    @Test
-    void createDivider_handlePositiveLength() {
-        assertEquals(System.lineSeparator(), createDivider(0));
-        assertEquals("- " + System.lineSeparator(), createDivider(1));
-        assertEquals("- - - " + System.lineSeparator(), createDivider(3));
-        assertEquals("- - - - - " + System.lineSeparator(), createDivider(5));
-        assertEquals("- - - - - - - - - - " + System.lineSeparator(), createDivider(10));
-        assertEquals("- - - - - - - - - - - - - - - - - " + System.lineSeparator(), createDivider(17));
-        assertEquals("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " + System.lineSeparator(),
-                createDivider(31));
-    }
-
-    @Test
-    void createDivider_handleNegativeLength() {
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-6348));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-25));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-7));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-1));
     }
 }

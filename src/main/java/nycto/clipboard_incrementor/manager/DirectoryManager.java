@@ -21,6 +21,7 @@ package nycto.clipboard_incrementor.manager;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
 import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
@@ -30,6 +31,48 @@ public class DirectoryManager {
     private static Path directoryPath;
 
     private DirectoryManager() {
+    }
+
+    static void changeDirectory() {
+        System.out.println("Enter the new directory path:");
+        String newDirectory = readConsoleInput();
+        Path newDirectoryPath = null;
+
+        while (newDirectory.isEmpty()) {
+            System.err.println("Directory path cannot be empty. Please enter a valid directory path:");
+            newDirectory = readConsoleInput();
+        }
+
+        try {
+            newDirectoryPath = Path.of(newDirectory);
+        } catch (InvalidPathException invalidPathException) {
+            System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() + "Please " +
+                    "enter a valid directory path:");
+        }
+
+        while (newDirectoryPath == null) {
+            newDirectory = readConsoleInput();
+
+            while (newDirectory.isEmpty()) {
+                System.err.println("Directory path cannot be empty. Please enter a valid directory path:");
+                newDirectory = readConsoleInput();
+            }
+
+            try {
+                newDirectoryPath = Path.of(newDirectory);
+            } catch (InvalidPathException invalidPathException) {
+                System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() +
+                        "Please enter a valid directory path:");
+            }
+        }
+
+        if (directoryExists(newDirectoryPath)) {
+            setDirectoryPath(newDirectoryPath);
+            submitDirectoryWatcher();
+        } else {
+            handleNonExistingDirectory(newDirectoryPath, "Continuing to watch" +
+                    " " + getDirectoryPath() + " for changes..." + System.lineSeparator());
+        }
     }
 
     private static void createDirectory(Path directoryPath) {
@@ -72,6 +115,10 @@ public class DirectoryManager {
         } else {
             System.out.println("Directory not created." + System.lineSeparator() + suffix);
         }
+    }
+
+    static void printCurrentDirectoryPath() {
+        System.out.println("Currently watching directory: " + getDirectoryPath());
     }
 
     public static Path getDirectoryPath() {
