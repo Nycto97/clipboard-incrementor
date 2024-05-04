@@ -38,7 +38,15 @@ public class Main {
     }
 
     private static void cancelFuture() {
-        if (future != null && !future.isDone()) future.cancel(true);
+        if (future != null && !future.isDone()) {
+            future.cancel(true);
+
+            if (future.isCancelled()) {
+                System.out.println("Successfully cancelled future");
+            } else {
+                System.err.println("Could not cancel future");
+            }
+        }
     }
 
     public static String createDivider(int length) throws IllegalArgumentException {
