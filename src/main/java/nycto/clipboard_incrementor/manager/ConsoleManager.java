@@ -32,6 +32,7 @@ public class ConsoleManager {
     private static final List<Command> commands = List.of(
             new Command("change", "Change the directory to watch for new files", List.of("c")),
             new Command("print", "Print the path of the currently watched directory", List.of("p")),
+            new Command("help", "Show the available commands", List.of("h", "commands")),
             new Command("stop", "Stop the application", List.of("s", "exit", "quit"))
     );
 
@@ -41,6 +42,16 @@ public class ConsoleManager {
     private static final Scanner stdinScanner = new Scanner(System.in);
 
     private ConsoleManager() {
+    }
+
+    private static void printCommands() {
+        System.out.println("Available commands:");
+
+        for (Command command : commands) {
+            String aliases = command.aliases().isEmpty() ? "" : " (" + String.join(", ", command.aliases()) + ")";
+
+            System.out.println(command.name() + aliases + ": " + command.description());
+        }
     }
 
     public static void processConsoleInput() {
@@ -63,6 +74,7 @@ public class ConsoleManager {
                 switch (commandToExecute) {
                     case "change" -> changeDirectory();
                     case "print" -> printCurrentDirectoryPath();
+                    case "help" -> printCommands();
                     case "stop" -> {
                         stopApplication();
 
