@@ -37,8 +37,8 @@ public class Main {
     }
 
     private static void startApplication() {
-    	System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
-                "..." + "\n");
+        System.out.println("Clipboard Incrementor - Press CTRL+C or type 'stop' in this console window to exit" +
+                "..." + System.lineSeparator());
         String directory = "C:\\users\\myName\\Desktop\\Test";
         Path directoryPath = Path.of(directory);
 

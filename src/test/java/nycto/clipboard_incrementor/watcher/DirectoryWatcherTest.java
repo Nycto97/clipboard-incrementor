@@ -32,13 +32,14 @@ class DirectoryWatcherTest {
 
     @Test
     void createDivider_handlePositiveLength() {
-        assertEquals("\n", createDivider(0));
-        assertEquals("- \n", createDivider(1));
-        assertEquals("- - - \n", createDivider(3));
-        assertEquals("- - - - - \n", createDivider(5));
-        assertEquals("- - - - - - - - - - \n", createDivider(10));
-        assertEquals("- - - - - - - - - - - - - - - - - \n", createDivider(17));
-        assertEquals("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n", createDivider(31));
+        assertEquals(System.lineSeparator(), createDivider(0));
+        assertEquals("- " + System.lineSeparator(), createDivider(1));
+        assertEquals("- - - " + System.lineSeparator(), createDivider(3));
+        assertEquals("- - - - - " + System.lineSeparator(), createDivider(5));
+        assertEquals("- - - - - - - - - - " + System.lineSeparator(), createDivider(10));
+        assertEquals("- - - - - - - - - - - - - - - - - " + System.lineSeparator(), createDivider(17));
+        assertEquals("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " + System.lineSeparator(),
+                createDivider(31));
     }
 
     @Test

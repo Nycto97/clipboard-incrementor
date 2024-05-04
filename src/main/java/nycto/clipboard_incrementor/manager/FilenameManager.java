@@ -81,13 +81,13 @@ public class FilenameManager {
 
                 } catch (NumberFormatException exception) {
                     newFilename += " (1)";
-                    System.out.println("The (last) number in the filename is too large to increment." + "\n" +
+                    System.out.println("The (last) number in the filename is too large to increment." + System.lineSeparator() +
                             "Added \" (1)\" to the filename instead.");
                 }
             } else {
                 newFilename += " (1)";
-                System.out.println("No number was found in the filename." + "\n" +
-                        "Added \" (1)\" to the filename." + "\n");
+                System.out.println("No number was found in the filename." + System.lineSeparator() +
+                        "Added \" (1)\" to the filename." + System.lineSeparator());
             }
 
             return newFilename;

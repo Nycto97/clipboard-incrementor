@@ -58,7 +58,7 @@ public class ClipboardManager {
 
         try {
             clipboard.setContents(clipboardTextStringSelection, null);
-            System.out.println("Clipboard is set to: " + clipboardText + "\n");
+            System.out.println("Clipboard is set to: " + clipboardText + System.lineSeparator());
         } catch (IllegalStateException illegalStateException) {
             throw new IllegalStateException("Could not set clipboard text", illegalStateException);
         }

@@ -35,7 +35,7 @@ public class DirectoryManager {
     private static void createDirectory(Path directoryPath) {
         try {
             Files.createDirectories(directoryPath);
-            System.out.println("Successfully created directory: " + directoryPath + "\n");
+            System.out.println("Successfully created directory: " + directoryPath + System.lineSeparator());
         } catch (IOException ioException) {
             throw new IllegalStateException("Could not create directory: " + directoryPath, ioException);
         } catch (SecurityException securityException) {
@@ -54,7 +54,7 @@ public class DirectoryManager {
     }
 
     public static void handleNonExistingDirectory(Path directoryPath, String suffix) {
-        System.out.println("Directory " + directoryPath + " does not exist." + "\n" + "Would you like to create it? (yes/no)");
+        System.out.println("Directory " + directoryPath + " does not exist." + System.lineSeparator() + "Would you like to create it? (yes/no)");
 
         String consoleInputLowerCase = readConsoleInput().toLowerCase();
 
@@ -70,7 +70,7 @@ public class DirectoryManager {
             setDirectoryPath(directoryPath);
             submitDirectoryWatcher();
         } else {
-            System.out.println("Directory not created." + "\n" + suffix);
+            System.out.println("Directory not created." + System.lineSeparator() + suffix);
         }
     }
 

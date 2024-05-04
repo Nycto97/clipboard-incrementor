@@ -39,7 +39,7 @@ public class DirectoryWatcher implements Callable<Void> {
             throw new IllegalArgumentException("Length can't be a negative number");
         }
 
-        return "- ".repeat(length) + "\n";
+        return "- ".repeat(length) + System.lineSeparator();
     }
 
     public static void closeWatchService() {
@@ -65,7 +65,7 @@ public class DirectoryWatcher implements Callable<Void> {
             watchService = createWatchService();
 
             directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("Watching " + directoryPath + " for changes..." + "\n");
+            System.out.println("Watching " + directoryPath + " for changes..." + System.lineSeparator());
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {

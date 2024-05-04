@@ -85,7 +85,7 @@ public class ConsoleManager {
                             submitDirectoryWatcher();
                         } else {
                             handleNonExistingDirectory(commandParameterPath, "Continuing to watch" +
-                                    " " + getDirectoryPath() + " for changes..." + "\n");
+                                    " " + getDirectoryPath() + " for changes..." + System.lineSeparator());
                         }
                     } catch (InvalidPathException invalidPathException) {
                         System.err.println("Invalid directory path format: " + commandArgument);
