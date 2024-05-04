@@ -23,11 +23,8 @@ import nycto.clipboard_incrementor.command.Command;
 
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static nycto.clipboard_incrementor.Main.stopApplication;
 import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
@@ -51,53 +48,71 @@ public class ConsoleManager {
     public static void processConsoleInput() {
         scanLineLoop:
         while (stdinScanner.hasNextLine()) {
-            String commandLowerCase;
-            String commandArgument = null;
+            String commandToExecute = null;
+            String inputFirstString = splitOnSpaces(readConsoleInput())[0];
+            boolean isInputCommandOrAlias = false;
 
-            String consoleInput = readConsoleInput();
-            List<String> consoleInputParts = splitOnSpacesIgnoringQuotes(consoleInput);
+            if (inputFirstString.isEmpty()) continue;
 
-            if (consoleInputParts.isEmpty()) continue;
-
-            if (consoleInputParts.size() > 2) {
-                System.out.println("Too many arguments provided");
-
-                continue;
+            for (Command command : commands) {
+                if (matchesCommandOrAlias(inputFirstString, command)) {
+                    commandToExecute = command.name();
+                    isInputCommandOrAlias = true;
+                }
             }
 
-            commandLowerCase = consoleInputParts.getFirst().toLowerCase();
+            if (isInputCommandOrAlias) {
+                switch (commandToExecute) {
+                    case "change" -> {
+                        System.out.println("Enter the new directory path:");
+                        String newDirectory = readConsoleInput();
+                        Path newDirectoryPath = null;
 
-            if (consoleInputParts.size() == 2) commandArgument = consoleInputParts.get(1);
+                        while (newDirectory.isEmpty()) {
+                            System.err.println("Directory path cannot be empty. Please enter a valid directory " +
+                                    "path:");
+                            newDirectory = readConsoleInput();
+                        }
 
-            switch (commandLowerCase) {
-                case "c", "change", "switch" -> {
-                    if (commandArgument == null) {
-                        System.err.println("No directory path provided");
+                        try {
+                            newDirectoryPath = Path.of(newDirectory);
+                        } catch (InvalidPathException invalidPathException) {
+                            System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() + "Please enter a valid directory path:");
+                        }
 
-                        continue;
-                    }
+                        while (newDirectoryPath == null) {
+                            newDirectory = readConsoleInput();
 
-                    try {
-                        Path commandParameterPath = Path.of(commandArgument);
+                            while (newDirectory.isEmpty()) {
+                                System.err.println("Directory path cannot be empty. Please enter a valid directory " +
+                                        "path:");
+                                newDirectory = readConsoleInput();
+                            }
 
-                        if (directoryExists(commandParameterPath)) {
-                            setDirectoryPath(commandParameterPath);
+                            try {
+                                newDirectoryPath = Path.of(newDirectory);
+                            } catch (InvalidPathException invalidPathException) {
+                                System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() + "Please enter a valid directory path:");
+                            }
+                        }
+
+                        if (directoryExists(newDirectoryPath)) {
+                            setDirectoryPath(newDirectoryPath);
                             submitDirectoryWatcher();
                         } else {
-                            handleNonExistingDirectory(commandParameterPath, "Continuing to watch" +
+                            handleNonExistingDirectory(newDirectoryPath, "Continuing to watch" +
                                     " " + getDirectoryPath() + " for changes..." + System.lineSeparator());
                         }
-                    } catch (InvalidPathException invalidPathException) {
-                        System.err.println("Invalid directory path format: " + commandArgument);
+                    }
+                    case "print" -> System.out.println("Currently watching: " + getDirectoryPath());
+                    case "stop" -> {
+                        stopApplication();
+
+                        break scanLineLoop;
                     }
                 }
-                case "p", "print", "dir", "path" -> System.out.println("Currently watching: " + getDirectoryPath());
-                case "s", "stop", "!", "exit", "quit" -> {
-                    stopApplication();
-
-                    break scanLineLoop;
-                }
-                default -> System.err.println("Unknown command: " + commandLowerCase);
+            } else {
+                System.err.println("Unknown command: " + inputFirstString);
             }
         }
     }
@@ -106,22 +121,21 @@ public class ConsoleManager {
         return stdinScanner.nextLine().trim();
     }
 
-    /**
-     * Splits a string on spaces, ignoring spaces inside quotes, to preserve quoted strings.
-     * <p>
-     * E.g. changedir "C:/users/my name/Desktop/Test Folder" -> ["changedir", "C:/users/my name/Desktop/Test Folder"]
-     *
-     * @param input The string to split.
-     * @return A list of parts.
-     */
-    private static List<String> splitOnSpacesIgnoringQuotes(String input) {
-        Pattern pattern = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"");
-        Matcher matcher = pattern.matcher(input);
+    private static boolean matchesCommandOrAlias(String input, Command command) {
+        if (input.equalsIgnoreCase(command.name())) {
+            return true;
+        }
 
-        List<String> parts = new ArrayList<>();
+        for (String alias : command.aliases()) {
+            if (input.equalsIgnoreCase(alias)) {
+                return true;
+            }
+        }
 
-        while (matcher.find()) parts.add(matcher.group());
+        return false;
+    }
 
-        return parts;
+    private static String[] splitOnSpaces(String input) {
+        return input.split("\\s+");
     }
 }
