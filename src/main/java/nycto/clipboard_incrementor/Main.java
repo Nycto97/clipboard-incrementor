@@ -75,7 +75,7 @@ public class Main {
         }
     }
 
-    private static void printStartBanner() {
+    static void printStartBanner() {
         System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");
         System.out.println("- - - - - - - - Clipboard Incrementor - - - - - - - -");
         System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - - - -");

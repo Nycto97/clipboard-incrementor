@@ -20,12 +20,53 @@
 package nycto.clipboard_incrementor;
 
 import static nycto.clipboard_incrementor.Main.createDivider;
+import static nycto.clipboard_incrementor.Main.printStartBanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MainTest {
+
+    private final PrintStream stdout = System.out;
+    private final ByteArrayOutputStream stdoutBuffer = new ByteArrayOutputStream();
+
+    @BeforeEach
+    void setUp() {
+        /* Redirect stdout to ByteArrayOutputStream to test printed output */
+        System.setOut(new PrintStream(stdoutBuffer));
+    }
+
+    @AfterEach
+    void tearDown() {
+        /* Reset stdout to the original stdout PrintStream */
+        System.setOut(stdout);
+    }
+
+    @Test
+    void printStartBanner_test() {
+        printStartBanner();
+
+        String expectedOutput =
+            "- - - - - - - - - - - - - - - - - - - - - - - - - - -" +
+            System.lineSeparator() +
+            "- - - - - - - - Clipboard Incrementor - - - - - - - -" +
+            System.lineSeparator() +
+            "- - - - - - - - - - - - - - - - - - - - - - - - - - -" +
+            System.lineSeparator() +
+            "- - - - Type 'help' to see available commands - - - -" +
+            System.lineSeparator() +
+            "- - - - - - - - - - - - - - - - - - - - - - - - - - -" +
+            System.lineSeparator() +
+            System.lineSeparator();
+        String actualOutput = stdoutBuffer.toString();
+
+        assertEquals(expectedOutput, actualOutput);
+    }
 
     @Test
     void createDivider_handlePositiveLength() {
