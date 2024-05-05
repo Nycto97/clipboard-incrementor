@@ -49,10 +49,19 @@
                         <includes>
                             <include>src/*/java/**/*.java</include>
                         </includes>
-                        <googleJavaFormat>
-                            <version>1.22.0</version>
-                            <style>AOSP</style>
-                        </googleJavaFormat>
+                        <prettier>
+                            <devDependencies>
+                                <prettier>3.2.5</prettier>
+                                <prettier-plugin-java>2.6.0</prettier-plugin-java>
+                            </devDependencies>
+                            <config>
+                                <tabWidth>4</tabWidth>
+                                <printWidth>120</printWidth>
+                                <useTabs>false</useTabs>
+                                <parser>java</parser>
+                                <plugins>prettier-plugin-java</plugins>
+                            </config>
+                        </prettier>
                         <endWithNewline/>
                         <formatAnnotations/>
                         <importOrder/>
