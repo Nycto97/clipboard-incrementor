@@ -150,7 +150,7 @@ public class DirectoryManager {
                 osNameSuffix +
                 System.lineSeparator() +
                 "Could not open directory: " +
-                getDirectoryPath()
+                directoryPath
             );
             return;
         }
@@ -162,7 +162,7 @@ public class DirectoryManager {
                 "Desktop class does not support the OPEN action" +
                 System.lineSeparator() +
                 "Could not open directory: " +
-                getDirectoryPath()
+                directoryPath
             );
             return;
         }
@@ -171,14 +171,14 @@ public class DirectoryManager {
             desktop.open(new File(directoryPath.toString()));
             System.out.println("Successfully opened directory: " + directoryPath);
         } catch (IOException ioException) {
-            System.err.println("Could not open directory: " + getDirectoryPath());
+            System.err.println("Could not open directory: " + directoryPath);
         } catch (SecurityException securityException) {
-            System.err.println("Permission denied to open directory: " + getDirectoryPath());
+            System.err.println("Permission denied to open directory: " + directoryPath);
         }
     }
 
     static void printCurrentDirectoryPath() {
-        System.out.println("Currently watching directory: " + getDirectoryPath());
+        System.out.println("Currently watching directory: " + directoryPath);
     }
 
     public static Path getDirectoryPath() {
