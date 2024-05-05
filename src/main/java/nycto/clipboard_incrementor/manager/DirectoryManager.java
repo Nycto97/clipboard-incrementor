@@ -129,8 +129,6 @@ public class DirectoryManager {
     }
 
     static void openCurrentDirectory() {
-        Path directoryPath = getDirectoryPath();
-
         if (directoryPath == null) {
             System.err.println(
                 "Directory path is not configured yet" +
