@@ -104,20 +104,20 @@ public class DirectoryManager {
             "Would you like to create it? (yes/no)"
         );
 
-        String consoleInputLowerCase = readConsoleInput().toLowerCase();
+        String consoleInput = readConsoleInput();
 
         while (
-            !consoleInputLowerCase.equals("y") &&
-            !consoleInputLowerCase.equals("yes") &&
-            !consoleInputLowerCase.equals("n") &&
-            !consoleInputLowerCase.equals("no")
+            !consoleInput.equalsIgnoreCase("y") &&
+            !consoleInput.equalsIgnoreCase("yes") &&
+            !consoleInput.equalsIgnoreCase("n") &&
+            !consoleInput.equalsIgnoreCase("no")
         ) {
             System.out.println("Invalid input. Please enter 'yes' or 'no'");
 
-            consoleInputLowerCase = readConsoleInput().toLowerCase();
+            consoleInput = readConsoleInput();
         }
 
-        if (consoleInputLowerCase.equals("y") || consoleInputLowerCase.equals("yes")) {
+        if (consoleInput.equalsIgnoreCase("y") || consoleInput.equalsIgnoreCase("yes")) {
             createDirectory(directoryPath);
             setDirectoryPath(directoryPath);
             submitDirectoryWatcher();
