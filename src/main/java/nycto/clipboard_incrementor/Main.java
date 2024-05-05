@@ -24,6 +24,7 @@ import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleI
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.closeWatchService;
 
+import java.awt.*;
 import java.nio.file.Path;
 import java.util.concurrent.*;
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
@@ -31,6 +32,14 @@ import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 public class Main {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+
+    public static final String OS_NAME = getOperatingSystemName();
+    public static final String OS_NAME_SUFFIX = OS_NAME.isEmpty() ? "" : " (" + OS_NAME + ")";
+
+    public static final boolean IS_DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
+    public static final Desktop DESKTOP = IS_DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+    public static final boolean IS_OPEN_ACTION_SUPPORTED = DESKTOP != null && DESKTOP.isSupported(Desktop.Action.OPEN);
+
     private static Future<?> future = null;
 
     public static void main(String[] args) {

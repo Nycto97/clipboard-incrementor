@@ -19,11 +19,9 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import static nycto.clipboard_incrementor.Main.getOperatingSystemName;
-import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
+import static nycto.clipboard_incrementor.Main.*;
 import static nycto.clipboard_incrementor.manager.ConsoleManager.readConsoleInput;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -139,13 +137,10 @@ public class DirectoryManager {
             return;
         }
 
-        if (!Desktop.isDesktopSupported()) {
-            String osName = getOperatingSystemName();
-            String osNameSuffix = osName.isEmpty() ? "" : " (" + osName + ")";
-
+        if (!IS_DESKTOP_SUPPORTED) {
             System.err.println(
                 "Desktop class is not supported on this platform" +
-                osNameSuffix +
+                OS_NAME_SUFFIX +
                 System.lineSeparator() +
                 "Could not open directory: " +
                 directoryPath
@@ -153,9 +148,7 @@ public class DirectoryManager {
             return;
         }
 
-        Desktop desktop = Desktop.getDesktop();
-
-        if (!desktop.isSupported(Desktop.Action.OPEN)) {
+        if (!IS_OPEN_ACTION_SUPPORTED) {
             System.err.println(
                 "Desktop class does not support the OPEN action" +
                 System.lineSeparator() +
@@ -166,7 +159,7 @@ public class DirectoryManager {
         }
 
         try {
-            desktop.open(new File(directoryPath.toString()));
+            DESKTOP.open(new File(directoryPath.toString()));
             System.out.println("Successfully opened directory: " + directoryPath);
         } catch (IOException ioException) {
             System.err.println("Could not open directory: " + directoryPath);
