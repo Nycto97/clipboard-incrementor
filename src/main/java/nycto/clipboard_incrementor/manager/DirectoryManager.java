@@ -129,6 +129,18 @@ public class DirectoryManager {
     }
 
     static void openCurrentDirectory() {
+        Path directoryPath = getDirectoryPath();
+
+        if (directoryPath == null) {
+            System.err.println(
+                "Directory path is not configured yet" +
+                System.lineSeparator() +
+                "Please configure " +
+                "the directory path using the 'change' command before trying to open the current directory"
+            );
+            return;
+        }
+
         if (!Desktop.isDesktopSupported()) {
             String osName = getOperatingSystemName();
             String osNameSuffix = osName.isEmpty() ? "" : " (" + osName + ")";
@@ -151,18 +163,6 @@ public class DirectoryManager {
                 System.lineSeparator() +
                 "Could not open directory: " +
                 getDirectoryPath()
-            );
-            return;
-        }
-
-        Path directoryPath = getDirectoryPath();
-
-        if (directoryPath == null) {
-            System.err.println(
-                "Directory path is not configured yet" +
-                System.lineSeparator() +
-                "Please configure " +
-                "the directory path using the 'change' command before trying to open the current directory"
             );
             return;
         }
