@@ -30,7 +30,7 @@ import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
 
 public class Main {
 
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
     private static Future<?> future = null;
 
     public static void main(String[] args) {
@@ -109,17 +109,17 @@ public class Main {
         closeWatchService();
         cancelFuture();
 
-        executorService.shutdown();
+        EXECUTOR_SERVICE.shutdown();
 
         try {
-            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                executorService.shutdownNow();
+            if (!EXECUTOR_SERVICE.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                EXECUTOR_SERVICE.shutdownNow();
             }
         } catch (InterruptedException interruptedException) {
-            executorService.shutdownNow();
+            EXECUTOR_SERVICE.shutdownNow();
         }
 
-        if (executorService.isShutdown()) {
+        if (EXECUTOR_SERVICE.isShutdown()) {
             System.out.println("Successfully shut down ExecutorService");
         } else {
             System.err.println("Could not shut down ExecutorService");
@@ -133,7 +133,7 @@ public class Main {
         closeWatchService();
 
         try {
-            future = executorService.submit(new DirectoryWatcher());
+            future = EXECUTOR_SERVICE.submit(new DirectoryWatcher());
         } catch (NullPointerException | RejectedExecutionException exception) {
             throw new IllegalStateException("Could not submit Callable for watching the directory", exception);
         }

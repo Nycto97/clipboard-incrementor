@@ -28,7 +28,7 @@ import nycto.clipboard_incrementor.command.Command;
 
 public class ConsoleManager {
 
-    private static final List<Command> commands = List.of(
+    private static final List<Command> COMMANDS = List.of(
         new Command("change", "Change the directory to watch for new files", List.of("c")),
         new Command("print", "Print the path of the currently watched directory", List.of("p")),
         new Command("open", "Open the directory that is currently being watched", List.of("o")),
@@ -39,14 +39,14 @@ public class ConsoleManager {
     /**
      * Scanner object for reading "standard" input from the console.
      */
-    private static final Scanner stdinScanner = new Scanner(System.in);
+    private static final Scanner STDIN_SCANNER = new Scanner(System.in);
 
     private ConsoleManager() {}
 
     private static void printCommands() {
         System.out.println("Available commands:");
 
-        for (Command command : commands) {
+        for (Command command : COMMANDS) {
             String aliases = command.aliases().isEmpty() ? "" : " (" + String.join(", ", command.aliases()) + ")";
 
             System.out.println(command.name() + aliases + ": " + command.description());
@@ -54,19 +54,19 @@ public class ConsoleManager {
     }
 
     public static void closeStdinScanner() {
-        stdinScanner.close();
+        STDIN_SCANNER.close();
         System.out.println("Successfully closed standard input scanner");
     }
 
     public static void processConsoleInput() {
-        scanLineLoop:while (stdinScanner.hasNextLine()) {
+        scanLineLoop:while (STDIN_SCANNER.hasNextLine()) {
             String commandToExecute = null;
             String inputFirstString = splitOnSpaces(readConsoleInput())[0];
             boolean isInputCommandOrAlias = false;
 
             if (inputFirstString.isEmpty()) continue;
 
-            for (Command command : commands) {
+            for (Command command : COMMANDS) {
                 if (matchesCommandOrAlias(inputFirstString, command)) {
                     commandToExecute = command.name();
                     isInputCommandOrAlias = true;
@@ -92,7 +92,7 @@ public class ConsoleManager {
     }
 
     public static String readConsoleInput() {
-        return stdinScanner.nextLine().trim();
+        return STDIN_SCANNER.nextLine().trim();
     }
 
     private static boolean matchesCommandOrAlias(String input, Command command) {
