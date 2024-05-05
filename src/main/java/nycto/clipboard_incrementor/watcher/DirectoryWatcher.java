@@ -19,21 +19,21 @@
 
 package nycto.clipboard_incrementor.watcher;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.concurrent.Callable;
-
 import static nycto.clipboard_incrementor.Main.createDivider;
 import static nycto.clipboard_incrementor.manager.ClipboardManager.getClipboardText;
 import static nycto.clipboard_incrementor.manager.ClipboardManager.setClipboardText;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
 import static nycto.clipboard_incrementor.manager.FilenameManager.createNewFilename;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.concurrent.Callable;
+
 public class DirectoryWatcher implements Callable<Void> {
+
     private static WatchService watchService;
 
-    public DirectoryWatcher() {
-    }
+    public DirectoryWatcher() {}
 
     public static void closeWatchService() {
         if (watchService != null) {

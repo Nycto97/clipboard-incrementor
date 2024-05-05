@@ -19,6 +19,10 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import static nycto.clipboard_incrementor.Main.getOperatingSystemName;
+import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
+import static nycto.clipboard_incrementor.manager.ConsoleManager.readConsoleInput;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -26,15 +30,11 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
-import static nycto.clipboard_incrementor.Main.getOperatingSystemName;
-import static nycto.clipboard_incrementor.Main.submitDirectoryWatcher;
-import static nycto.clipboard_incrementor.manager.ConsoleManager.readConsoleInput;
-
 public class DirectoryManager {
+
     private static Path directoryPath;
 
-    private DirectoryManager() {
-    }
+    private DirectoryManager() {}
 
     static void changeDirectory() {
         System.out.println("Enter the new directory path:");
@@ -52,8 +52,12 @@ public class DirectoryManager {
             try {
                 newDirectoryPath = Path.of(newDirectory);
             } catch (InvalidPathException invalidPathException) {
-                System.err.println("Invalid directory path format: " + newDirectory + System.lineSeparator() +
-                        "Please enter a valid directory path:");
+                System.err.println(
+                    "Invalid directory path format: " +
+                    newDirectory +
+                    System.lineSeparator() +
+                    "Please enter a valid directory path:"
+                );
             }
         }
 
@@ -61,8 +65,10 @@ public class DirectoryManager {
             setDirectoryPath(newDirectoryPath);
             submitDirectoryWatcher();
         } else {
-            handleNonExistingDirectory(newDirectoryPath, "Continuing to watch" +
-                    " " + getDirectoryPath() + " for changes..." + System.lineSeparator());
+            handleNonExistingDirectory(
+                newDirectoryPath,
+                "Continuing to watch" + " " + getDirectoryPath() + " for changes..." + System.lineSeparator()
+            );
         }
     }
 
@@ -73,8 +79,10 @@ public class DirectoryManager {
         } catch (IOException ioException) {
             throw new IllegalStateException("Could not create directory: " + directoryPath, ioException);
         } catch (SecurityException securityException) {
-            throw new IllegalStateException("Permission denied to create directory: " + directoryPath,
-                    securityException);
+            throw new IllegalStateException(
+                "Permission denied to create directory: " + directoryPath,
+                securityException
+            );
         }
     }
 
@@ -82,18 +90,30 @@ public class DirectoryManager {
         try {
             return Files.exists(directoryPath);
         } catch (SecurityException securityException) {
-            throw new IllegalStateException("Permission denied to access directory: " + directoryPath,
-                    securityException);
+            throw new IllegalStateException(
+                "Permission denied to access directory: " + directoryPath,
+                securityException
+            );
         }
     }
 
     public static void handleNonExistingDirectory(Path directoryPath, String suffix) {
-        System.out.println("Directory " + directoryPath + " does not exist." + System.lineSeparator() + "Would you like to create it? (yes/no)");
+        System.out.println(
+            "Directory " +
+            directoryPath +
+            " does not exist." +
+            System.lineSeparator() +
+            "Would you like to create it? (yes/no)"
+        );
 
         String consoleInputLowerCase = readConsoleInput().toLowerCase();
 
-        while (!consoleInputLowerCase.equals("y") && !consoleInputLowerCase.equals("yes") &&
-                !consoleInputLowerCase.equals("n") && !consoleInputLowerCase.equals("no")) {
+        while (
+            !consoleInputLowerCase.equals("y") &&
+            !consoleInputLowerCase.equals("yes") &&
+            !consoleInputLowerCase.equals("n") &&
+            !consoleInputLowerCase.equals("no")
+        ) {
             System.out.println("Invalid input. Please enter 'yes' or 'no'");
 
             consoleInputLowerCase = readConsoleInput().toLowerCase();
@@ -113,24 +133,37 @@ public class DirectoryManager {
             String osName = getOperatingSystemName();
             String osNameSuffix = osName.isEmpty() ? "" : " (" + osName + ")";
 
-            System.err.println("Desktop class is not supported on this platform" + osNameSuffix + System.lineSeparator() +
-                    "Could not open directory: " + getDirectoryPath());
+            System.err.println(
+                "Desktop class is not supported on this platform" +
+                osNameSuffix +
+                System.lineSeparator() +
+                "Could not open directory: " +
+                getDirectoryPath()
+            );
             return;
         }
 
         Desktop desktop = Desktop.getDesktop();
 
         if (!desktop.isSupported(Desktop.Action.OPEN)) {
-            System.err.println("Desktop class does not support the OPEN action" + System.lineSeparator() +
-                    "Could not open directory: " + getDirectoryPath());
+            System.err.println(
+                "Desktop class does not support the OPEN action" +
+                System.lineSeparator() +
+                "Could not open directory: " +
+                getDirectoryPath()
+            );
             return;
         }
 
         Path directoryPath = getDirectoryPath();
 
         if (directoryPath == null) {
-            System.err.println("Directory path is not configured yet" + System.lineSeparator() + "Please configure " +
-                    "the directory path using the 'change' command before trying to open the current directory");
+            System.err.println(
+                "Directory path is not configured yet" +
+                System.lineSeparator() +
+                "Please configure " +
+                "the directory path using the 'change' command before trying to open the current directory"
+            );
             return;
         }
 

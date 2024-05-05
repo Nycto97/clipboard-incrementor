@@ -19,17 +19,17 @@
 
 package nycto.clipboard_incrementor;
 
-import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
-
-import java.nio.file.Path;
-import java.util.concurrent.*;
-
 import static nycto.clipboard_incrementor.manager.ConsoleManager.closeStdinScanner;
 import static nycto.clipboard_incrementor.manager.ConsoleManager.processConsoleInput;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.closeWatchService;
 
+import java.nio.file.Path;
+import java.util.concurrent.*;
+import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
+
 public class Main {
+
     private static final ExecutorService executorService = Executors.newCachedThreadPool();
     private static Future<?> future = null;
 
@@ -56,7 +56,7 @@ public class Main {
 
         return "- ".repeat(length) + System.lineSeparator();
     }
-    
+
     public static String getOperatingSystemName() {
         try {
             String osName = System.getProperty("os.name");
@@ -85,8 +85,11 @@ public class Main {
             setDirectoryPath(directoryPath);
             submitDirectoryWatcher();
         } else {
-            handleNonExistingDirectory(directoryPath, "Please update the directory path to an existing" +
-                    " directory using the 'change' command or stop the application with the 'stop' command.");
+            handleNonExistingDirectory(
+                directoryPath,
+                "Please update the directory path to an existing" +
+                " directory using the 'change' command or stop the application with the 'stop' command."
+            );
         }
 
         processConsoleInput();
@@ -96,7 +99,7 @@ public class Main {
      * Stops the application by closing the standard input scanner, closing the watch service,
      * canceling the future and shutting down the ExecutorService.
      *
-     * @see 
+     * @see
      * <a href="https://www.baeldung.com/java-executor-service-tutorial#shutting">Shutting Down an ExecutorService</a>
      */
     public static void stopApplication() {

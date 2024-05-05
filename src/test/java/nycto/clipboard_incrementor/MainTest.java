@@ -19,13 +19,14 @@
 
 package nycto.clipboard_incrementor;
 
-import org.junit.jupiter.api.Test;
-
 import static nycto.clipboard_incrementor.Main.createDivider;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Test;
+
 class MainTest {
+
     @Test
     void createDivider_handlePositiveLength() {
         assertEquals(System.lineSeparator(), createDivider(0));
@@ -34,8 +35,10 @@ class MainTest {
         assertEquals("- - - - - " + System.lineSeparator(), createDivider(5));
         assertEquals("- - - - - - - - - - " + System.lineSeparator(), createDivider(10));
         assertEquals("- - - - - - - - - - - - - - - - - " + System.lineSeparator(), createDivider(17));
-        assertEquals("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " + System.lineSeparator(),
-                createDivider(31));
+        assertEquals(
+            "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " + System.lineSeparator(),
+            createDivider(31)
+        );
     }
 
     @Test

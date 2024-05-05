@@ -19,16 +19,16 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.awt.datatransfer.Clipboard;
-
 import static nycto.clipboard_incrementor.manager.ClipboardManager.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.awt.datatransfer.Clipboard;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 class ClipboardManagerTest {
+
     @BeforeEach
     void setup() {
         Clipboard testClipboard = new Clipboard("testClipboard");

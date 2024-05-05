@@ -19,21 +19,21 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import nycto.clipboard_incrementor.command.Command;
-
-import java.util.List;
-import java.util.Scanner;
-
 import static nycto.clipboard_incrementor.Main.stopApplication;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 
+import java.util.List;
+import java.util.Scanner;
+import nycto.clipboard_incrementor.command.Command;
+
 public class ConsoleManager {
+
     private static final List<Command> commands = List.of(
-            new Command("change", "Change the directory to watch for new files", List.of("c")),
-            new Command("print", "Print the path of the currently watched directory", List.of("p")),
-            new Command("open", "Open the directory that is currently being watched", List.of("o")),
-            new Command("help", "Show the available commands", List.of("h", "commands")),
-            new Command("stop", "Stop the application", List.of("s", "exit", "quit"))
+        new Command("change", "Change the directory to watch for new files", List.of("c")),
+        new Command("print", "Print the path of the currently watched directory", List.of("p")),
+        new Command("open", "Open the directory that is currently being watched", List.of("o")),
+        new Command("help", "Show the available commands", List.of("h", "commands")),
+        new Command("stop", "Stop the application", List.of("s", "exit", "quit"))
     );
 
     /**
@@ -41,8 +41,7 @@ public class ConsoleManager {
      */
     private static final Scanner stdinScanner = new Scanner(System.in);
 
-    private ConsoleManager() {
-    }
+    private ConsoleManager() {}
 
     private static void printCommands() {
         System.out.println("Available commands:");
@@ -60,8 +59,7 @@ public class ConsoleManager {
     }
 
     public static void processConsoleInput() {
-        scanLineLoop:
-        while (stdinScanner.hasNextLine()) {
+        scanLineLoop:while (stdinScanner.hasNextLine()) {
             String commandToExecute = null;
             String inputFirstString = splitOnSpaces(readConsoleInput())[0];
             boolean isInputCommandOrAlias = false;

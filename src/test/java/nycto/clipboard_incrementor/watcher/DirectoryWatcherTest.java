@@ -22,7 +22,7 @@ package nycto.clipboard_incrementor.watcher;
 import org.junit.jupiter.api.Test;
 
 class DirectoryWatcherTest {
+
     @Test
-    void call() {
-    }
+    void call() {}
 }

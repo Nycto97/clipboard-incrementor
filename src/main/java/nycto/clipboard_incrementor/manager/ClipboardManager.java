@@ -24,10 +24,10 @@ import java.awt.datatransfer.*;
 import java.io.IOException;
 
 public class ClipboardManager {
+
     private static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-    private ClipboardManager() {
-    }
+    private ClipboardManager() {}
 
     static Clipboard getClipboard() {
         return clipboard;
@@ -39,8 +39,8 @@ public class ClipboardManager {
 
     public static String getClipboardText() throws IllegalStateException {
         Transferable clipboardContents = clipboard.getContents(null);
-        boolean clipboardHasString = (clipboardContents != null) &&
-                clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
+        boolean clipboardHasString =
+            (clipboardContents != null) && clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
 
         if (clipboardHasString) {
             try {

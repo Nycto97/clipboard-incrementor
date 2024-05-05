@@ -19,12 +19,13 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import org.junit.jupiter.api.Test;
-
 import static nycto.clipboard_incrementor.manager.FilenameManager.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 class FilenameManagerTest {
+
     @Test
     void createNewFilename_test() {
         assertEquals("Cool Car 24", createNewFilename("Cool Car 23.jpg"));

@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class FilenameManager {
-    private FilenameManager() {
-    }
+
+    private FilenameManager() {}
 
     public static String createNewFilename(String filename) {
         String filenameWithoutExtensions = removeFileExtensions(filename);
@@ -67,33 +67,45 @@ public class FilenameManager {
                     }
 
                     if (leadingZeroCount > 0) {
-                        if (lastNumberNew.length() > String.valueOf(lastNumber).length() ||
-                                lastNumberString.length() == leadingZeroCount) {
+                        if (
+                            lastNumberNew.length() > String.valueOf(lastNumber).length() ||
+                            lastNumberString.length() == leadingZeroCount
+                        ) {
                             leadingZeroCount--;
                         }
 
                         lastNumberNew = "0".repeat(leadingZeroCount) + lastNumberNew;
                     }
 
-                    newFilename =
-                            filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) + lastNumberNew +
-                                    filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
-
+                    newFilename = filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) +
+                    lastNumberNew +
+                    filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
                 } catch (NumberFormatException exception) {
                     newFilename += " (1)";
-                    System.out.println("The (last) number in the filename is too large to increment." + System.lineSeparator() +
-                            "Added \" (1)\" to the filename instead.");
+                    System.out.println(
+                        "The (last) number in the filename is too large to increment." +
+                        System.lineSeparator() +
+                        "Added \" (1)\" to the filename instead."
+                    );
                 }
             } else {
                 newFilename += " (1)";
-                System.out.println("No number was found in the filename." + System.lineSeparator() +
-                        "Added \" (1)\" to the filename." + System.lineSeparator());
+                System.out.println(
+                    "No number was found in the filename." +
+                    System.lineSeparator() +
+                    "Added \" (1)\" to the filename." +
+                    System.lineSeparator()
+                );
             }
 
             return newFilename;
-
-        } catch (IllegalArgumentException | IllegalStateException | IndexOutOfBoundsException |
-                 NullPointerException | OutOfMemoryError exception) {
+        } catch (
+            IllegalArgumentException
+            | IllegalStateException
+            | IndexOutOfBoundsException
+            | NullPointerException
+            | OutOfMemoryError exception
+        ) {
             return newFilename + " (1)";
         }
     }
@@ -106,8 +118,11 @@ public class FilenameManager {
         try {
             return filename.replaceAll(extensionPattern, "");
         } catch (PatternSyntaxException patternSyntaxException) {
-            throw new PatternSyntaxException("Could not remove file extension because the regex pattern is invalid",
-                    extensionPattern, -1);
+            throw new PatternSyntaxException(
+                "Could not remove file extension because the regex pattern is invalid",
+                extensionPattern,
+                -1
+            );
         }
     }
 
