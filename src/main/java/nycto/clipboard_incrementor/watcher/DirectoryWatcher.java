@@ -74,21 +74,17 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     if (filename.endsWith(".crdownload")) break;
 
-                    WatchEvent.Kind<?> watchEventKind = watchEvent.kind();
-
                     /* The code up to the break runs twice */
-                    if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        @Nullable String clipboardText = getClipboardText();
-                        String newFilename = createNewFilename(filename);
+                    @Nullable String clipboardText = getClipboardText();
+                    String newFilename = createNewFilename(filename);
 
-                        if (clipboardText != null && clipboardText.equals(newFilename)) break;
+                    if (clipboardText != null && clipboardText.equals(newFilename)) break;
 
-                        String newFileCreatedText = "New file is created: ";
-                        System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
-                        System.out.println(newFileCreatedText + filename);
+                    String newFileCreatedText = "New file is created: ";
+                    System.out.println(createDivider((newFileCreatedText.length() + filename.length()) / 2));
+                    System.out.println(newFileCreatedText + filename);
 
-                        setClipboardText(newFilename);
-                    }
+                    setClipboardText(newFilename);
                 }
 
                 /* Reset the watch key everytime for continuing to use it for further event retrieval */
