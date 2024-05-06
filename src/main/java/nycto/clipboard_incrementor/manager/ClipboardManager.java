@@ -38,7 +38,7 @@ public class ClipboardManager {
         ClipboardManager.clipboard = clipboard;
     }
 
-    @Nullable public static String getClipboardText() throws IllegalStateException {
+    @Nullable public static String getClipboardText() {
         @Nullable Transferable clipboardContents = clipboard.getContents(null);
         boolean clipboardHasString =
             (clipboardContents != null) && clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
@@ -47,7 +47,7 @@ public class ClipboardManager {
             try {
                 return (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
             } catch (IOException | UnsupportedFlavorException exception) {
-                throw new IllegalStateException("Could not get clipboard contents", exception);
+                return null;
             }
         } else {
             return null;
