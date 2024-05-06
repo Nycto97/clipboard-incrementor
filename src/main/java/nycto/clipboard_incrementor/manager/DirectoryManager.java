@@ -40,7 +40,7 @@ public class DirectoryManager {
         @Nullable String newDirectory;
         @Nullable Path newDirectoryPath = null;
 
-        while (newDirectoryPath == null) {
+        while (newDirectoryPath == null || newDirectoryPath.equals(directoryPath)) {
             newDirectory = readConsoleInput();
 
             while (newDirectory.isEmpty()) {
@@ -50,6 +50,14 @@ public class DirectoryManager {
 
             try {
                 newDirectoryPath = Path.of(newDirectory);
+
+                if (newDirectoryPath.equals(directoryPath)) {
+                    System.err.println(
+                        "New directory path cannot be the same as current directory path" +
+                        System.lineSeparator() +
+                        "Enter a different directory path:"
+                    );
+                }
             } catch (InvalidPathException invalidPathException) {
                 System.err.println(
                     "Invalid directory path format: " +
