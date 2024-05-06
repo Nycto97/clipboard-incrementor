@@ -19,8 +19,8 @@
 
 package nycto.clipboard_incrementor.manager;
 
-import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.setDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.getWatchedDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.setWatchedDirectoryPath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
@@ -32,9 +32,9 @@ class DirectoryManagerTest {
     void setAndGetDirectoryPath_test() {
         Path expectedPath = Path.of("C:\\testUser\\testName\\testDir");
 
-        setDirectoryPath(expectedPath);
+        setWatchedDirectoryPath(expectedPath);
 
-        Path actualPath = getDirectoryPath();
+        Path actualPath = getWatchedDirectoryPath();
 
         assertEquals(expectedPath, actualPath);
     }

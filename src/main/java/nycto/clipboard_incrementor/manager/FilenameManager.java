@@ -21,16 +21,13 @@ package nycto.clipboard_incrementor.manager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 public class FilenameManager {
 
     private FilenameManager() {}
 
     public static String createNewFilename(String filename) {
-        String filenameWithoutExtensions = removeFileExtensions(filename);
-
-        return incrementLastNumber(filenameWithoutExtensions);
+        return incrementLastNumber(removeFileExtensions(filename));
     }
 
     static String incrementLastNumber(String filenameWithoutExtensions) {
@@ -91,9 +88,9 @@ public class FilenameManager {
             } else {
                 newFilename += " (1)";
                 System.out.println(
-                    "No number was found in the filename." +
+                    "No number was found in the filename" +
                     System.lineSeparator() +
-                    "Added \" (1)\" to the filename." +
+                    "Added \" (1)\" to the filename" +
                     System.lineSeparator()
                 );
             }
@@ -110,20 +107,12 @@ public class FilenameManager {
         }
     }
 
-    static String removeFileExtension(String filename, boolean removeAllExtensions) throws PatternSyntaxException {
+    static String removeFileExtension(String filename, boolean removeAllExtensions) {
         if (!filename.contains(".")) return filename;
 
         String extensionPattern = "(?<!^)[.]" + (removeAllExtensions ? ".*" : "[^.]*$");
 
-        try {
-            return filename.replaceAll(extensionPattern, "");
-        } catch (PatternSyntaxException patternSyntaxException) {
-            throw new PatternSyntaxException(
-                "Could not remove file extension because the regex pattern is invalid",
-                extensionPattern,
-                -1
-            );
-        }
+        return filename.replaceAll(extensionPattern, "");
     }
 
     static String removeFileExtensions(String filename) {

@@ -34,21 +34,18 @@ class FilenameManagerTest {
         assertEquals("xo02632-prod6", createNewFilename("xo02632-prod5.test.java"));
     }
 
-    /* Remove file extensions before incrementing to avoid using number from file extension as number to increment */
     @Test
     void createNewFilename_removeFileExtensionsBeforeIncrementing() {
         assertEquals("some_song_5", createNewFilename("some_song_4.mp3"));
         assertEquals("Funny Meme 837", createNewFilename("Funny Meme 836.temp.mp4"));
     }
 
-    /* Add ' (1)' when filename doesn't contain a number */
     @Test
     void createNewFilename_addNumberIfNoNumber() {
         assertEquals("file (1)", createNewFilename("file.txt"));
         assertEquals("banner-icon (1)", createNewFilename("banner-icon.png"));
     }
 
-    /* Preserve leading zeros */
     @Test
     void createNewFilename_preserveLeadingZeros() {
         assertEquals("02", createNewFilename("01.json"));
@@ -56,7 +53,6 @@ class FilenameManagerTest {
         assertEquals("cool_text-00003", createNewFilename("cool_text-00002.txt"));
     }
 
-    /* Remove 1 leading zero when amount of digits increases */
     @Test
     void createNewFilename_removeLeadingZeroOnDigitIncrease() {
         assertEquals("Cool Car (10)", createNewFilename("Cool Car (09).jpg"));
@@ -64,7 +60,6 @@ class FilenameManagerTest {
         assertEquals("some-song-001000", createNewFilename("some-song-000999.mp3"));
     }
 
-    /* Remove 1 leading zero when number only consists of zeros */
     @Test
     void createNewFilename_removeLeadingZeroIfOnlyZeros() {
         assertEquals("01", createNewFilename("00.xml"));
@@ -79,14 +74,12 @@ class FilenameManagerTest {
         assertEquals("1", createNewFilename("0.min.css"));
     }
 
-    /* Remove negative sign caused by Long.MAX_VALUE overflow */
     @Test
     void createNewFilename_removeNegativeSignCausedByLongMaxValueOverflow() {
         assertEquals("9223372036854775808", createNewFilename("9223372036854775807.ts"));
         assertEquals("file_9223372036854775808", createNewFilename("file_9223372036854775807.json5"));
     }
 
-    /* Add ' (1)' when Long.MAX_VALUE is surpassed */
     @Test
     void createNewFilename_addNumberIfLongMaxValueIsSurpassed() {
         assertEquals("9223372036854775808 (1)", createNewFilename("9223372036854775808.py"));
@@ -101,14 +94,12 @@ class FilenameManagerTest {
         assertEquals("xo02632-prod6", incrementLastNumber("xo02632-prod5"));
     }
 
-    /* Add ' (1)' when filename doesn't contain a number */
     @Test
     void incrementLastNumber_addNumberIfNoNumber() {
         assertEquals("file (1)", incrementLastNumber("file"));
         assertEquals("banner-icon (1)", incrementLastNumber("banner-icon"));
     }
 
-    /* Preserve leading zeros */
     @Test
     void incrementLastNumber_preserveLeadingZeros() {
         assertEquals("02", incrementLastNumber("01"));
@@ -116,7 +107,6 @@ class FilenameManagerTest {
         assertEquals("cool_text-00003", incrementLastNumber("cool_text-00002"));
     }
 
-    /* Remove 1 leading zero when amount of digits increases */
     @Test
     void incrementLastNumber_removeLeadingZeroOnDigitIncrease() {
         assertEquals("Cool Car (10)", incrementLastNumber("Cool Car (09)"));
@@ -124,7 +114,6 @@ class FilenameManagerTest {
         assertEquals("some-song-001000", incrementLastNumber("some-song-000999"));
     }
 
-    /* Remove 1 leading zero when number only consists of zeros */
     @Test
     void incrementLastNumber_removeLeadingZeroIfOnlyZeros() {
         assertEquals("01", incrementLastNumber("00"));
@@ -138,21 +127,18 @@ class FilenameManagerTest {
         assertEquals("1", incrementLastNumber("0"));
     }
 
-    /* Remove negative sign caused by Long.MAX_VALUE overflow */
     @Test
     void incrementLastNumber_removeNegativeSignCausedByLongMaxValueOverflow() {
         assertEquals("9223372036854775808", incrementLastNumber("9223372036854775807"));
         assertEquals("file_9223372036854775808", incrementLastNumber("file_9223372036854775807"));
     }
 
-    /* Add ' (1)' when Long.MAX_VALUE is surpassed */
     @Test
     void incrementLastNumber_addNumberIfLongMaxValueIsSurpassed() {
         assertEquals("9223372036854775808 (1)", incrementLastNumber("9223372036854775808"));
         assertEquals("9223372036854775999999999 (1)", incrementLastNumber("9223372036854775999999999"));
     }
 
-    /* Handle no file extension */
     @Test
     void removeFileExtension_handleNoFileExtension() {
         assertEquals("grghszzertgh", removeFileExtension("grghszzertgh", true));
@@ -162,7 +148,6 @@ class FilenameManagerTest {
         assertEquals("_-_file_-4315", removeFileExtension("_-_file_-4315", false));
     }
 
-    /* Handle 1 file extension */
     @Test
     void removeFileExtension_handleSingleFileExtension() {
         assertEquals("Cool Car 23", removeFileExtension("Cool Car 23.jpg", true));
@@ -172,7 +157,6 @@ class FilenameManagerTest {
         assertEquals("some_song05", removeFileExtension("some_song05.mp3", false));
     }
 
-    /* Handle multiple file extensions */
     @Test
     void removeFileExtension_handleMultipleFileExtensions() {
         assertEquals("cute cat (8)", removeFileExtension("cute cat (8).test.png", true));
@@ -185,7 +169,6 @@ class FilenameManagerTest {
         assertEquals("file2.with.dots.123", removeFileExtension("file2.with.dots.123.file", false));
     }
 
-    /* Handle dotfiles */
     @Test
     void removeFileExtension_handleDotfiles() {
         assertEquals(".gitignore", removeFileExtension(".gitignore", true));
@@ -198,21 +181,18 @@ class FilenameManagerTest {
         assertEquals(".gitignore.temp", removeFileExtension(".gitignore.temp.old", false));
     }
 
-    /* Handle no file extension */
     @Test
     void removeFileExtensions_handleNoFileExtension() {
         assertEquals("grghszzertgh", removeFileExtensions("grghszzertgh"));
         assertEquals("_-_file_-4315", removeFileExtensions("_-_file_-4315"));
     }
 
-    /* Handle 1 file extension */
     @Test
     void removeFileExtensions_handleSingleFileExtension() {
         assertEquals("Cool Car 23", removeFileExtensions("Cool Car 23.jpg"));
         assertEquals("some_song05", removeFileExtensions("some_song05.mp3"));
     }
 
-    /* Handle multiple file extensions */
     @Test
     void removeFileExtensions_handleMultipleFileExtensions() {
         assertEquals("cute cat (8)", removeFileExtensions("cute cat (8).test.png"));
@@ -220,7 +200,6 @@ class FilenameManagerTest {
         assertEquals("file2", removeFileExtensions("file2.with.dots.123.file"));
     }
 
-    /* Handle dotfiles */
     @Test
     void removeFileExtensions_handleDotfiles() {
         assertEquals(".gitignore", removeFileExtensions(".gitignore"));

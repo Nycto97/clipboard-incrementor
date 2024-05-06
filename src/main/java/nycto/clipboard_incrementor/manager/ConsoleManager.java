@@ -26,13 +26,12 @@ import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import java.util.List;
 import java.util.Scanner;
 import nycto.clipboard_incrementor.command.Command;
-import org.jetbrains.annotations.Nullable;
 
 public class ConsoleManager {
 
     private static final List<Command> COMMANDS = List.of(
         new Command("change", "Change the directory to watch for new files", List.of("c")),
-        new Command("print", "Print the path of the currently watched directory", List.of("p")),
+        new Command("print", "Print the path of the directory that is currently being watched", List.of("p")),
         new Command("open", "Open the directory that is currently being watched", List.of("o")),
         new Command("help", "Show the available commands", List.of("h", "commands")),
         new Command("issue", "Report an issue", List.of("i", "report")),
@@ -58,56 +57,52 @@ public class ConsoleManager {
 
     public static void closeStdinScanner() {
         STDIN_SCANNER.close();
-        System.out.println("Successfully closed standard input scanner");
+        System.out.println("Successfully closed \"standard\" input scanner");
     }
 
     public static void processConsoleInput() {
-        scanLineLoop:while (STDIN_SCANNER.hasNextLine()) {
-            @Nullable String commandToExecute = null;
-            String inputFirstString = splitOnSpaces(readConsoleInput())[0];
-            boolean isInputCommandOrAlias = false;
+        scanInputLoop:while (STDIN_SCANNER.hasNextLine()) {
+            String commandToExecute = null;
+            String consoleInputFirstString = splitOnSpaces(readConsoleInput())[0];
+            boolean isConsoleInputCommandOrAlias = false;
 
-            if (inputFirstString.isEmpty()) continue;
+            if (consoleInputFirstString.isEmpty()) continue;
 
             for (Command command : COMMANDS) {
                 if (matchesCommandOrAlias(inputFirstString, command)) {
                     commandToExecute = command.name();
-                    isInputCommandOrAlias = true;
+                    isConsoleInputCommandOrAlias = true;
                 }
             }
 
-            if (isInputCommandOrAlias) {
-                switch (commandToExecute) {
-                    case "change" -> changeDirectory();
-                    case "print" -> printCurrentDirectoryPath();
-                    case "open" -> openCurrentDirectory();
-                    case "help" -> printCommands();
-                    case "issue" -> openIssuesPage();
-                    case "stop" -> {
-                        stopApplication();
+            if (!isConsoleInputCommandOrAlias) {
+                System.err.println("Unknown command: " + consoleInputFirstString);
+                continue;
+            }
 
-                        break scanLineLoop;
-                    }
+            switch (commandToExecute) {
+                case "change" -> changeDirectory();
+                case "print" -> printCurrentDirectoryMessage();
+                case "open" -> openCurrentDirectory();
+                case "help" -> printCommands();
+                case "issue" -> openIssuesPage();
+                case "stop" -> {
+                    stopApplication();
+                    break scanInputLoop;
                 }
-            } else {
-                System.err.println("Unknown command: " + inputFirstString);
             }
         }
     }
 
-    public static String readConsoleInput() {
+    static String readConsoleInput() {
         return STDIN_SCANNER.nextLine().trim();
     }
 
     private static boolean matchesCommandOrAlias(String input, Command command) {
-        if (input.equalsIgnoreCase(command.name())) {
-            return true;
-        }
+        if (input.equalsIgnoreCase(command.name())) return true;
 
         for (String alias : command.aliases()) {
-            if (input.equalsIgnoreCase(alias)) {
-                return true;
-            }
+            if (input.equalsIgnoreCase(alias)) return true;
         }
 
         return false;

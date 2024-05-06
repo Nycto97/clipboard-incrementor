@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DirectoryManager {
 
-    @Nullable private static Path directoryPath;
+    @Nullable private static Path watchedDirectoryPath;
 
     private DirectoryManager() {}
 
@@ -40,18 +40,18 @@ public class DirectoryManager {
         @Nullable String newDirectory;
         @Nullable Path newDirectoryPath = null;
 
-        while (newDirectoryPath == null || newDirectoryPath.equals(directoryPath)) {
+        while (newDirectoryPath == null || newDirectoryPath.equals(watchedDirectoryPath)) {
             newDirectory = readConsoleInput();
 
             while (newDirectory.isEmpty()) {
-                System.err.println("Directory path cannot be empty. Please enter a valid directory path:");
+                System.err.println("Directory path cannot be empty. Enter a valid directory path:");
                 newDirectory = readConsoleInput();
             }
 
             try {
                 newDirectoryPath = Path.of(newDirectory);
 
-                if (newDirectoryPath.equals(directoryPath)) {
+                if (newDirectoryPath.equals(watchedDirectoryPath)) {
                     System.err.println(
                         "New directory path cannot be the same as current directory path" +
                         System.lineSeparator() +
@@ -63,18 +63,18 @@ public class DirectoryManager {
                     "Invalid directory path format: " +
                     newDirectory +
                     System.lineSeparator() +
-                    "Please enter a valid directory path:"
+                    "Enter a valid directory path:"
                 );
             }
         }
 
         if (directoryExists(newDirectoryPath)) {
-            setDirectoryPath(newDirectoryPath);
+            setWatchedDirectoryPath(newDirectoryPath);
             submitDirectoryWatcher();
         } else {
             handleNonExistingDirectory(
                 newDirectoryPath,
-                "Continuing to watch" + " " + getDirectoryPath() + " for changes..." + System.lineSeparator()
+                "Watching directory " + watchedDirectoryPath + " for new files..." + System.lineSeparator()
             );
         }
     }
@@ -108,7 +108,7 @@ public class DirectoryManager {
         System.out.println(
             "Directory " +
             directoryPath +
-            " does not exist." +
+            " does not exist" +
             System.lineSeparator() +
             "Would you like to create it? (yes/no)"
         );
@@ -121,27 +121,26 @@ public class DirectoryManager {
             !consoleInput.equalsIgnoreCase("n") &&
             !consoleInput.equalsIgnoreCase("no")
         ) {
-            System.out.println("Invalid input. Please enter 'yes' or 'no'");
+            System.out.println("Invalid input. Enter 'yes' or 'no'");
 
             consoleInput = readConsoleInput();
         }
 
         if (consoleInput.equalsIgnoreCase("y") || consoleInput.equalsIgnoreCase("yes")) {
             createDirectory(directoryPath);
-            setDirectoryPath(directoryPath);
+            setWatchedDirectoryPath(directoryPath);
             submitDirectoryWatcher();
         } else {
-            System.out.println("Directory not created." + System.lineSeparator() + suffix);
+            System.out.println("Directory not created" + System.lineSeparator() + suffix);
         }
     }
 
     static void openCurrentDirectory() {
-        if (directoryPath == null) {
+        if (watchedDirectoryPath == null) {
             System.err.println(
                 "Directory path is not configured yet" +
                 System.lineSeparator() +
-                "Please configure " +
-                "the directory path using the 'change' command before trying to open the current directory"
+                "Configure the directory path using the 'change' command"
             );
             return;
         }
@@ -152,7 +151,7 @@ public class DirectoryManager {
                 OS_NAME_SUFFIX +
                 System.lineSeparator() +
                 "Could not open directory: " +
-                directoryPath
+                watchedDirectoryPath
             );
             return;
         }
@@ -162,30 +161,30 @@ public class DirectoryManager {
                 "Desktop class does not support the OPEN action" +
                 System.lineSeparator() +
                 "Could not open directory: " +
-                directoryPath
+                watchedDirectoryPath
             );
             return;
         }
 
         try {
-            DESKTOP.open(new File(directoryPath.toString()));
-            System.out.println("Successfully opened directory: " + directoryPath);
+            DESKTOP.open(new File(watchedDirectoryPath.toString()));
+            System.out.println("Successfully opened directory: " + watchedDirectoryPath);
         } catch (IOException ioException) {
-            System.err.println("Could not open directory: " + directoryPath);
+            System.err.println("Could not open directory: " + watchedDirectoryPath);
         } catch (SecurityException securityException) {
-            System.err.println("Permission denied to open directory: " + directoryPath);
+            System.err.println("Permission denied to open directory: " + watchedDirectoryPath);
         }
     }
 
-    static void printCurrentDirectoryPath() {
-        System.out.println("Currently watching directory: " + directoryPath);
+    public static void printCurrentDirectoryMessage() {
+        System.out.println("Watching directory " + watchedDirectoryPath + " for new files..." + System.lineSeparator());
     }
 
-    public static @Nullable Path getDirectoryPath() {
-        return directoryPath;
+    public static @Nullable Path getWatchedDirectoryPath() {
+        return watchedDirectoryPath;
     }
 
-    public static void setDirectoryPath(@Nullable Path directoryPath) {
-        DirectoryManager.directoryPath = directoryPath;
+    public static void setWatchedDirectoryPath(@Nullable Path watchedDirectoryPath) {
+        DirectoryManager.watchedDirectoryPath = watchedDirectoryPath;
     }
 }

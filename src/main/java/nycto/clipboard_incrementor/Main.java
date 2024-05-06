@@ -54,14 +54,14 @@ public class Main {
     }
 
     private static void cancelFuture() {
-        if (future != null && !future.isDone()) {
-            future.cancel(true);
+        if (future == null || future.isDone()) return;
 
-            if (future.isCancelled()) {
-                System.out.println("Successfully cancelled future");
-            } else {
-                System.err.println("Could not cancel future");
-            }
+        future.cancel(true);
+
+        if (future.isCancelled()) {
+            System.out.println("Successfully cancelled future");
+        } else {
+            System.err.println("Could not cancel future");
         }
     }
 
@@ -136,13 +136,13 @@ public class Main {
         Path directoryPath = Path.of(directory);
 
         if (directoryExists(directoryPath)) {
-            setDirectoryPath(directoryPath);
+            setWatchedDirectoryPath(directoryPath);
             submitDirectoryWatcher();
         } else {
             handleNonExistingDirectory(
                 directoryPath,
-                "Please update the directory path to an existing" +
-                " directory using the 'change' command or stop the application with the 'stop' command."
+                "Update the directory path to an existing" +
+                " directory using the 'change' command or stop the application with the 'stop' command"
             );
         }
 
@@ -150,7 +150,7 @@ public class Main {
     }
 
     /**
-     * Stops the application by closing the standard input scanner, closing the watch service,
+     * Stops the application by closing the "standard" input scanner, closing the watch service,
      * canceling the future and shutting down the ExecutorService.
      *
      * @see

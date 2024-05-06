@@ -22,7 +22,8 @@ package nycto.clipboard_incrementor.watcher;
 import static nycto.clipboard_incrementor.Main.createDivider;
 import static nycto.clipboard_incrementor.manager.ClipboardManager.getClipboardText;
 import static nycto.clipboard_incrementor.manager.ClipboardManager.setClipboardText;
-import static nycto.clipboard_incrementor.manager.DirectoryManager.getDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.getWatchedDirectoryPath;
+import static nycto.clipboard_incrementor.manager.DirectoryManager.printCurrentDirectoryMessage;
 import static nycto.clipboard_incrementor.manager.FilenameManager.createNewFilename;
 
 import java.io.IOException;
@@ -37,13 +38,13 @@ public class DirectoryWatcher implements Callable<Void> {
     public DirectoryWatcher() {}
 
     public static void closeWatchService() {
-        if (watchService != null) {
-            try {
-                watchService.close();
-                System.out.println("Successfully closed watch service");
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+        if (watchService == null) return;
+
+        try {
+            watchService.close();
+            System.out.println("Successfully closed watch service");
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
     }
 
@@ -55,17 +56,15 @@ public class DirectoryWatcher implements Callable<Void> {
     public Void call() {
         try {
             WatchKey watchKey;
-            Path directoryPath = getDirectoryPath();
+            Path directoryPath = getWatchedDirectoryPath();
             watchService = createWatchService();
 
             directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("Watching " + directoryPath + " for changes..." + System.lineSeparator());
+            printCurrentDirectoryMessage();
 
             /* Wait for and retrieve watch events */
             while ((watchKey = watchService.take()) != null) {
-                if (Thread.currentThread().isInterrupted()) {
-                    return null;
-                }
+                if (Thread.currentThread().isInterrupted()) return null;
 
                 for (WatchEvent<?> watchEvent : watchKey.pollEvents()) {
                     @SuppressWarnings("unchecked")
@@ -74,7 +73,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     if (filename.endsWith(".crdownload")) break;
 
-                    /* The code up to the break runs twice */
+                    /* The code up to the last break runs twice */
                     @Nullable String clipboardText = getClipboardText();
                     String newFilename = createNewFilename(filename);
 
@@ -87,7 +86,7 @@ public class DirectoryWatcher implements Callable<Void> {
                     setClipboardText(newFilename);
                 }
 
-                /* Reset the watch key everytime for continuing to use it for further event retrieval */
+                /* Reset watch key every iteration for continuing to use it for further event retrieval */
                 boolean isWatchKeyValid = watchKey.reset();
 
                 if (!isWatchKeyValid) break;

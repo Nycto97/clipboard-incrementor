@@ -41,15 +41,13 @@ public class ClipboardManager {
     @Nullable public static String getClipboardText() {
         @Nullable Transferable clipboardContents = clipboard.getContents(null);
         boolean clipboardHasString =
-            (clipboardContents != null) && clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
+            clipboardContents != null && clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
 
-        if (clipboardHasString) {
-            try {
-                return (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
-            } catch (IOException | UnsupportedFlavorException exception) {
-                return null;
-            }
-        } else {
+        if (!clipboardHasString) return null;
+
+        try {
+            return (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
+        } catch (IOException | UnsupportedFlavorException exception) {
             return null;
         }
     }
