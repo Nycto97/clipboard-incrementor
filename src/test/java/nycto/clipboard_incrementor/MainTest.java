@@ -22,7 +22,6 @@ package nycto.clipboard_incrementor;
 import static nycto.clipboard_incrementor.Main.createDivider;
 import static nycto.clipboard_incrementor.Main.printStartBanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -84,9 +83,9 @@ class MainTest {
 
     @Test
     void createDivider_handleNegativeLength() {
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-6348));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-25));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-7));
-        assertThrows(IllegalArgumentException.class, () -> createDivider(-1));
+        assertEquals(System.lineSeparator(), createDivider(-6348));
+        assertEquals(System.lineSeparator(), createDivider(-25));
+        assertEquals(System.lineSeparator(), createDivider(-7));
+        assertEquals(System.lineSeparator(), createDivider(-1));
     }
 }

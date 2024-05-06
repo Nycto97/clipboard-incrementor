@@ -61,10 +61,8 @@ public class Main {
         }
     }
 
-    public static String createDivider(int length) throws IllegalArgumentException {
-        if (length < 0) {
-            throw new IllegalArgumentException("Length can't be a negative number");
-        }
+    public static String createDivider(int length) {
+        if (length < 0) length = 0;
 
         return "- ".repeat(length) + System.lineSeparator();
     }
