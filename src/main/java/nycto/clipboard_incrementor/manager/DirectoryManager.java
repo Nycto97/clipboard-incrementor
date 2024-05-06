@@ -27,17 +27,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import org.jetbrains.annotations.Nullable;
 
 public class DirectoryManager {
 
-    private static Path directoryPath;
+    @Nullable private static Path directoryPath;
 
     private DirectoryManager() {}
 
     static void changeDirectory() {
         System.out.println("Enter the new directory path:");
-        String newDirectory;
-        Path newDirectoryPath = null;
+        @Nullable String newDirectory;
+        @Nullable Path newDirectoryPath = null;
 
         while (newDirectoryPath == null) {
             newDirectory = readConsoleInput();
@@ -172,11 +173,11 @@ public class DirectoryManager {
         System.out.println("Currently watching directory: " + directoryPath);
     }
 
-    public static Path getDirectoryPath() {
+    public static @Nullable Path getDirectoryPath() {
         return directoryPath;
     }
 
-    public static void setDirectoryPath(Path directoryPath) {
+    public static void setDirectoryPath(@Nullable Path directoryPath) {
         DirectoryManager.directoryPath = directoryPath;
     }
 }

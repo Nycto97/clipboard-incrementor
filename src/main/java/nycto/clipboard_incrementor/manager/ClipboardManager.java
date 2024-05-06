@@ -22,6 +22,7 @@ package nycto.clipboard_incrementor.manager;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.IOException;
+import org.jetbrains.annotations.Nullable;
 
 public class ClipboardManager {
 
@@ -37,8 +38,8 @@ public class ClipboardManager {
         ClipboardManager.clipboard = clipboard;
     }
 
-    public static String getClipboardText() throws IllegalStateException {
-        Transferable clipboardContents = clipboard.getContents(null);
+    @Nullable public static String getClipboardText() throws IllegalStateException {
+        @Nullable Transferable clipboardContents = clipboard.getContents(null);
         boolean clipboardHasString =
             (clipboardContents != null) && clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor);
 

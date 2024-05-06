@@ -25,6 +25,7 @@ import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import java.util.List;
 import java.util.Scanner;
 import nycto.clipboard_incrementor.command.Command;
+import org.jetbrains.annotations.Nullable;
 
 public class ConsoleManager {
 
@@ -60,7 +61,7 @@ public class ConsoleManager {
 
     public static void processConsoleInput() {
         scanLineLoop:while (STDIN_SCANNER.hasNextLine()) {
-            String commandToExecute = null;
+            @Nullable String commandToExecute = null;
             String inputFirstString = splitOnSpaces(readConsoleInput())[0];
             boolean isInputCommandOrAlias = false;
 

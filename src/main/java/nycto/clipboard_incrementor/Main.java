@@ -28,6 +28,7 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.concurrent.*;
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
+import org.jetbrains.annotations.Nullable;
 
 public class Main {
 
@@ -37,10 +38,12 @@ public class Main {
     public static final String OS_NAME_SUFFIX = OS_NAME.isEmpty() ? "" : " (" + OS_NAME + ")";
 
     public static final boolean IS_DESKTOP_SUPPORTED = Desktop.isDesktopSupported();
-    public static final Desktop DESKTOP = IS_DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+
+    @Nullable public static final Desktop DESKTOP = IS_DESKTOP_SUPPORTED ? Desktop.getDesktop() : null;
+
     public static final boolean IS_OPEN_ACTION_SUPPORTED = DESKTOP != null && DESKTOP.isSupported(Desktop.Action.OPEN);
 
-    private static Future<?> future = null;
+    @Nullable private static Future<?> future = null;
 
     public static void main(String[] args) {
         startApplication();
@@ -68,7 +71,7 @@ public class Main {
 
     public static String getOperatingSystemName() {
         try {
-            String osName = System.getProperty("os.name");
+            @Nullable String osName = System.getProperty("os.name");
             return osName != null ? osName : "";
         } catch (SecurityException securityException) {
             return "";

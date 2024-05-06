@@ -28,10 +28,11 @@ import static nycto.clipboard_incrementor.manager.FilenameManager.createNewFilen
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.concurrent.Callable;
+import org.jetbrains.annotations.Nullable;
 
 public class DirectoryWatcher implements Callable<Void> {
 
-    private static WatchService watchService;
+    @Nullable private static WatchService watchService;
 
     public DirectoryWatcher() {}
 
@@ -77,7 +78,7 @@ public class DirectoryWatcher implements Callable<Void> {
 
                     /* The code up to the break runs twice */
                     if (watchEventKind == StandardWatchEventKinds.ENTRY_CREATE) {
-                        String clipboardText = getClipboardText();
+                        @Nullable String clipboardText = getClipboardText();
                         String newFilename = createNewFilename(filename);
 
                         if (clipboardText != null && clipboardText.equals(newFilename)) break;
