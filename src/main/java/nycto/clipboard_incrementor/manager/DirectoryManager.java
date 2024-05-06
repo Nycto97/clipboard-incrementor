@@ -146,7 +146,7 @@ public class DirectoryManager {
             return;
         }
 
-        if (!IS_DESKTOP_SUPPORTED) {
+        if (!IS_DESKTOP_SUPPORTED || DESKTOP == null) {
             System.err.println(
                 "Desktop class is not supported on this platform" +
                 OS_NAME_SUFFIX +
