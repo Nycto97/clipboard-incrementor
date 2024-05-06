@@ -19,6 +19,7 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import static nycto.clipboard_incrementor.Main.openIssuesPage;
 import static nycto.clipboard_incrementor.Main.stopApplication;
 import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 
@@ -34,6 +35,7 @@ public class ConsoleManager {
         new Command("print", "Print the path of the currently watched directory", List.of("p")),
         new Command("open", "Open the directory that is currently being watched", List.of("o")),
         new Command("help", "Show the available commands", List.of("h", "commands")),
+        new Command("issue", "Report an issue", List.of("i", "report")),
         new Command("stop", "Stop the application", List.of("s", "exit", "quit"))
     );
 
@@ -80,6 +82,7 @@ public class ConsoleManager {
                     case "print" -> printCurrentDirectoryPath();
                     case "open" -> openCurrentDirectory();
                     case "help" -> printCommands();
+                    case "issue" -> openIssuesPage();
                     case "stop" -> {
                         stopApplication();
 

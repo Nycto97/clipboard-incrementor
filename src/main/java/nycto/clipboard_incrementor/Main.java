@@ -25,6 +25,8 @@ import static nycto.clipboard_incrementor.manager.DirectoryManager.*;
 import static nycto.clipboard_incrementor.watcher.DirectoryWatcher.closeWatchService;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.concurrent.*;
 import nycto.clipboard_incrementor.watcher.DirectoryWatcher;
@@ -33,6 +35,8 @@ import org.jetbrains.annotations.Nullable;
 public class Main {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+
+    public static final URI ISSUES_URI = URI.create("https://github.com/Nycto97/clipboard-incrementor/issues");
 
     public static final String OS_NAME = getOperatingSystemName();
     public static final String OS_NAME_SUFFIX = OS_NAME.isEmpty() ? "" : " (" + OS_NAME + ")";
@@ -73,6 +77,46 @@ public class Main {
             return osName != null ? osName : "";
         } catch (SecurityException securityException) {
             return "";
+        }
+    }
+
+    public static void openIssuesPage() {
+        if (!IS_DESKTOP_SUPPORTED || DESKTOP == null) {
+            System.err.println(
+                "Desktop class is not supported on this platform" +
+                OS_NAME_SUFFIX +
+                System.lineSeparator() +
+                "Could not open issues page. Visit the website manually:" +
+                System.lineSeparator() +
+                ISSUES_URI
+            );
+            return;
+        }
+
+        if (!IS_OPEN_ACTION_SUPPORTED) {
+            System.err.println(
+                "Desktop class does not support the OPEN action" +
+                System.lineSeparator() +
+                "Could not open issues page. Visit the website manually:" +
+                System.lineSeparator() +
+                ISSUES_URI
+            );
+            return;
+        }
+
+        try {
+            DESKTOP.browse(ISSUES_URI);
+            System.out.println("Successfully opened issues page");
+        } catch (IOException ioException) {
+            System.err.println(
+                "Could not open issues page. Visit the website manually:" + System.lineSeparator() + ISSUES_URI
+            );
+        } catch (SecurityException securityException) {
+            System.err.println(
+                "Permission denied to open issues page. Visit the website manually:" +
+                System.lineSeparator() +
+                ISSUES_URI
+            );
         }
     }
 
