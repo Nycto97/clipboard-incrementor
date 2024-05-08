@@ -59,6 +59,8 @@ public class DirectoryWatcher implements Callable<Void> {
             Path directoryPath = getWatchedDirectoryPath();
             watchService = createWatchService();
 
+            if (directoryPath == null) throw new IllegalStateException("Directory path is not set");
+
             directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
             printCurrentDirectoryMessage();
 

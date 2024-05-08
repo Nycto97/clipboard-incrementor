@@ -61,36 +61,40 @@ public class ConsoleManager {
     }
 
     public static void processConsoleInput() {
-        scanInputLoop:while (STDIN_SCANNER.hasNextLine()) {
-            String commandToExecute = null;
-            String consoleInputFirstString = splitOnSpaces(readConsoleInput())[0];
-            boolean isConsoleInputCommandOrAlias = false;
+        try {
+            scanInputLoop:while (STDIN_SCANNER.hasNextLine()) {
+                String commandToExecute = null;
+                String consoleInputFirstString = splitOnSpaces(readConsoleInput())[0];
+                boolean isConsoleInputCommandOrAlias = false;
 
-            if (consoleInputFirstString.isEmpty()) continue;
+                if (consoleInputFirstString.isEmpty()) continue;
 
-            for (Command command : COMMANDS) {
-                if (matchesCommandOrAlias(inputFirstString, command)) {
-                    commandToExecute = command.name();
-                    isConsoleInputCommandOrAlias = true;
+                for (Command command : COMMANDS) {
+                    if (matchesCommandOrAlias(consoleInputFirstString, command)) {
+                        commandToExecute = command.name();
+                        isConsoleInputCommandOrAlias = true;
+                    }
+                }
+
+                if (!isConsoleInputCommandOrAlias) {
+                    System.err.println("Unknown command: " + consoleInputFirstString);
+                    continue;
+                }
+
+                switch (commandToExecute) {
+                    case "change" -> changeDirectory();
+                    case "print" -> printCurrentDirectoryMessage();
+                    case "open" -> openCurrentDirectory();
+                    case "help" -> printCommands();
+                    case "issue" -> openIssuesPage();
+                    case "stop" -> {
+                        stopApplication();
+                        break scanInputLoop;
+                    }
                 }
             }
-
-            if (!isConsoleInputCommandOrAlias) {
-                System.err.println("Unknown command: " + consoleInputFirstString);
-                continue;
-            }
-
-            switch (commandToExecute) {
-                case "change" -> changeDirectory();
-                case "print" -> printCurrentDirectoryMessage();
-                case "open" -> openCurrentDirectory();
-                case "help" -> printCommands();
-                case "issue" -> openIssuesPage();
-                case "stop" -> {
-                    stopApplication();
-                    break scanInputLoop;
-                }
-            }
+        } catch (IllegalStateException illegalStateException) {
+            System.err.println("The \"standard\" input scanner is closed. Cannot process console input");
         }
     }
 

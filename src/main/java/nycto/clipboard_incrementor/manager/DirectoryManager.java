@@ -36,7 +36,7 @@ public class DirectoryManager {
     private DirectoryManager() {}
 
     static void changeDirectory() {
-        System.out.println("Enter the new directory path:");
+        System.out.println("Enter the " + (watchedDirectoryPath == null ? "" : "new ") + "directory path:");
         @Nullable String newDirectory;
         @Nullable Path newDirectoryPath = null;
 
@@ -177,6 +177,15 @@ public class DirectoryManager {
     }
 
     public static void printCurrentDirectoryMessage() {
+        if (watchedDirectoryPath == null) {
+            System.err.println(
+                "Directory path is not configured yet" +
+                System.lineSeparator() +
+                "Configure the directory path using the 'change' command"
+            );
+            return;
+        }
+
         System.out.println("Watching directory " + watchedDirectoryPath + " for new files..." + System.lineSeparator());
     }
 
