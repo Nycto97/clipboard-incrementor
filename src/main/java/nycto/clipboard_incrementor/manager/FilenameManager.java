@@ -19,6 +19,7 @@
 
 package nycto.clipboard_incrementor.manager;
 
+import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.Nullable;
@@ -28,10 +29,10 @@ public class FilenameManager {
     private FilenameManager() {}
 
     public static String createNewFilename(String filename) {
-        return incrementLastNumber(removeFileExtensions(filename));
+        return incrementLastNumberInFilename(removeFileExtensions(filename));
     }
 
-    static String incrementLastNumber(String filenameWithoutExtensions) {
+    static String incrementLastNumberInFilename(String filenameWithoutExtensions) {
         String newFilename = filenameWithoutExtensions;
 
         try {
@@ -51,41 +52,36 @@ public class FilenameManager {
                     }
                 }
 
-                try {
-                    long lastNumber = Long.parseLong(lastNumberString);
-                    String lastNumberNew = String.valueOf(lastNumber + 1);
+                @Nullable Number lastNumberParsed = parseNumber(lastNumberString);
+                @Nullable Number lastNumberIncremented = incrementNumber(lastNumberParsed);
 
-                    if (lastNumber == Long.MAX_VALUE) {
-                        /*
-                         * Remove the negative sign caused by overflow
-                         * This only occurs when lastNumber is exactly 9,223,372,036,854,775,807 (Long.MAX_VALUE)
-                         * lastNumber + 1 will result in -9,223,372,036,854,775,808 if this is the case
-                         */
-                        lastNumberNew = lastNumberNew.substring(1);
-                    }
-
-                    if (leadingZeroCount > 0) {
-                        if (
-                            lastNumberNew.length() > String.valueOf(lastNumber).length() ||
-                            lastNumberString.length() == leadingZeroCount
-                        ) {
-                            leadingZeroCount--;
-                        }
-
-                        lastNumberNew = "0".repeat(leadingZeroCount) + lastNumberNew;
-                    }
-
-                    newFilename = filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) +
-                    lastNumberNew +
-                    filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
-                } catch (NumberFormatException exception) {
-                    newFilename += " (1)";
+                if (lastNumberParsed == null || lastNumberIncremented == null) {
                     System.out.println(
-                        "The (last) number in the filename is too large to increment." +
+                        "Could not increment number in filename" +
                         System.lineSeparator() +
-                        "Added \" (1)\" to the filename instead."
+                        "Added \" (1)\" to the filename instead"
                     );
+
+                    return newFilename + " (1)";
                 }
+
+                String lastNumberIncrementedString = lastNumberIncremented.toString();
+                String lastNumberParsedString = lastNumberParsed.toString();
+
+                if (leadingZeroCount > 0) {
+                    if (
+                        lastNumberIncrementedString.length() > lastNumberParsedString.length() ||
+                        lastNumberString.length() == leadingZeroCount
+                    ) {
+                        leadingZeroCount--;
+                    }
+
+                    lastNumberIncrementedString = "0".repeat(leadingZeroCount) + lastNumberIncremented;
+                }
+
+                newFilename = filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) +
+                lastNumberIncrementedString +
+                filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
             } else {
                 newFilename += " (1)";
                 System.out.println(

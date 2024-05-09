@@ -75,68 +75,44 @@ class FilenameManagerTest {
     }
 
     @Test
-    void createNewFilename_removeNegativeSignCausedByLongMaxValueOverflow() {
-        assertEquals("9223372036854775808", createNewFilename("9223372036854775807.ts"));
-        assertEquals("file_9223372036854775808", createNewFilename("file_9223372036854775807.json5"));
+    void incrementLastNumberInFilename_test() {
+        assertEquals("Cool Car 24", incrementLastNumberInFilename("Cool Car 23"));
+        assertEquals("cute cat (9)", incrementLastNumberInFilename("cute cat (8)"));
+        assertEquals("14538210_1324532_1324", incrementLastNumberInFilename("14538210_1324532_1323"));
+        assertEquals("xo02632-prod6", incrementLastNumberInFilename("xo02632-prod5"));
     }
 
     @Test
-    void createNewFilename_addNumberIfLongMaxValueIsSurpassed() {
-        assertEquals("9223372036854775808 (1)", createNewFilename("9223372036854775808.py"));
-        assertEquals("9223372036854775999999999 (1)", createNewFilename("9223372036854775999999999.css"));
+    void incrementLastNumberInFilename_addNumberIfNoNumber() {
+        assertEquals("file (1)", incrementLastNumberInFilename("file"));
+        assertEquals("banner-icon (1)", incrementLastNumberInFilename("banner-icon"));
     }
 
     @Test
-    void incrementLastNumber_test() {
-        assertEquals("Cool Car 24", incrementLastNumber("Cool Car 23"));
-        assertEquals("cute cat (9)", incrementLastNumber("cute cat (8)"));
-        assertEquals("14538210_1324532_1324", incrementLastNumber("14538210_1324532_1323"));
-        assertEquals("xo02632-prod6", incrementLastNumber("xo02632-prod5"));
+    void incrementLastNumberInFilename_preserveLeadingZeros() {
+        assertEquals("02", incrementLastNumberInFilename("01"));
+        assertEquals("some_song006", incrementLastNumberInFilename("some_song005"));
+        assertEquals("cool_text-00003", incrementLastNumberInFilename("cool_text-00002"));
     }
 
     @Test
-    void incrementLastNumber_addNumberIfNoNumber() {
-        assertEquals("file (1)", incrementLastNumber("file"));
-        assertEquals("banner-icon (1)", incrementLastNumber("banner-icon"));
+    void incrementLastNumberInFilename_removeLeadingZeroOnDigitIncrease() {
+        assertEquals("Cool Car (10)", incrementLastNumberInFilename("Cool Car (09)"));
+        assertEquals("vb~rr~0100", incrementLastNumberInFilename("vb~rr~0099"));
+        assertEquals("some-song-001000", incrementLastNumberInFilename("some-song-000999"));
     }
 
     @Test
-    void incrementLastNumber_preserveLeadingZeros() {
-        assertEquals("02", incrementLastNumber("01"));
-        assertEquals("some_song006", incrementLastNumber("some_song005"));
-        assertEquals("cool_text-00003", incrementLastNumber("cool_text-00002"));
-    }
-
-    @Test
-    void incrementLastNumber_removeLeadingZeroOnDigitIncrease() {
-        assertEquals("Cool Car (10)", incrementLastNumber("Cool Car (09)"));
-        assertEquals("vb~rr~0100", incrementLastNumber("vb~rr~0099"));
-        assertEquals("some-song-001000", incrementLastNumber("some-song-000999"));
-    }
-
-    @Test
-    void incrementLastNumber_removeLeadingZeroIfOnlyZeros() {
-        assertEquals("01", incrementLastNumber("00"));
-        assertEquals("001", incrementLastNumber("000"));
-        assertEquals("00001", incrementLastNumber("00000"));
+    void incrementLastNumberInFilename_removeLeadingZeroIfOnlyZeros() {
+        assertEquals("01", incrementLastNumberInFilename("00"));
+        assertEquals("001", incrementLastNumberInFilename("000"));
+        assertEquals("00001", incrementLastNumberInFilename("00000"));
     }
 
     /* Don't treat '0' as leading zero */
     @Test
-    void incrementLastNumber_removeLeadingZeroIfZeroOnly() {
-        assertEquals("1", incrementLastNumber("0"));
-    }
-
-    @Test
-    void incrementLastNumber_removeNegativeSignCausedByLongMaxValueOverflow() {
-        assertEquals("9223372036854775808", incrementLastNumber("9223372036854775807"));
-        assertEquals("file_9223372036854775808", incrementLastNumber("file_9223372036854775807"));
-    }
-
-    @Test
-    void incrementLastNumber_addNumberIfLongMaxValueIsSurpassed() {
-        assertEquals("9223372036854775808 (1)", incrementLastNumber("9223372036854775808"));
-        assertEquals("9223372036854775999999999 (1)", incrementLastNumber("9223372036854775999999999"));
+    void incrementLastNumberInFilename_removeLeadingZeroIfZeroOnly() {
+        assertEquals("1", incrementLastNumberInFilename("0"));
     }
 
     @Test
