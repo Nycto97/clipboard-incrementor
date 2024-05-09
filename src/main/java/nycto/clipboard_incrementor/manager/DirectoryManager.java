@@ -80,6 +80,33 @@ public class DirectoryManager {
     }
 
     private static void createDirectory(Path directoryPath) {
+        while (directoryExists(directoryPath)) {
+            System.err.println(
+                "Directory already exists: " +
+                directoryPath +
+                System.lineSeparator() +
+                "Enter a different directory path:"
+            );
+
+            String directory = readConsoleInput();
+
+            while (directory.isEmpty()) {
+                System.err.println("Directory path cannot be empty. Enter a valid directory path:");
+                directory = readConsoleInput();
+            }
+
+            try {
+                directoryPath = Path.of(directory);
+            } catch (InvalidPathException invalidPathException) {
+                System.err.println(
+                    "Invalid directory path format: " +
+                    directory +
+                    System.lineSeparator() +
+                    "Enter a valid directory path:"
+                );
+            }
+        }
+
         try {
             Files.createDirectories(directoryPath);
             System.out.println("Successfully created directory: " + directoryPath + System.lineSeparator());
