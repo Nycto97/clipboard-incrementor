@@ -21,6 +21,7 @@ package nycto.clipboard_incrementor.manager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.Nullable;
 
 public class FilenameManager {
 
@@ -104,6 +105,31 @@ public class FilenameManager {
             | OutOfMemoryError exception
         ) {
             return newFilename + " (1)";
+        }
+    }
+
+    @Nullable private static Number incrementNumber(Number number) {
+        return switch (number) {
+            case Integer i -> (int) number + 1;
+            case Long l -> (long) number + 1;
+            case BigInteger bigInteger -> bigInteger.add(BigInteger.ONE);
+            default -> null;
+        };
+    }
+
+    @Nullable private static Number parseNumber(String number) {
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException integerFormatException) {
+            try {
+                return Long.parseLong(number);
+            } catch (NumberFormatException longFormatException) {
+                try {
+                    return new BigInteger(number);
+                } catch (NumberFormatException bigIntegerFormatException) {
+                    return null;
+                }
+            }
         }
     }
 
