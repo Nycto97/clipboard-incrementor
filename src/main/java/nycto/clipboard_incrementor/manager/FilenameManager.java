@@ -28,80 +28,67 @@ public class FilenameManager {
 
     private FilenameManager() {}
 
+    private static int countLeadingZeros(String string) {
+        if (!string.startsWith("0") || !(string.length() > 1)) return 0;
+
+        Pattern leadingZeroPattern = Pattern.compile("^0+");
+        Matcher leadingZeroPatternMatcher = leadingZeroPattern.matcher(string);
+
+        if (!leadingZeroPatternMatcher.find()) return 0;
+
+        return leadingZeroPatternMatcher.group().length();
+    }
+
     public static String createNewFilename(String filename) {
         return incrementLastNumberInFilename(removeFileExtensions(filename));
     }
 
     static String incrementLastNumberInFilename(String filenameWithoutExtensions) {
-        String newFilename = filenameWithoutExtensions;
+        Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
+        Matcher lastNumberPatternMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
 
-        try {
-            Pattern lastNumberPattern = Pattern.compile("(\\d+)(?!.*\\d)");
-            Matcher lastNumberPatternMatcher = lastNumberPattern.matcher(filenameWithoutExtensions);
+        if (!lastNumberPatternMatcher.find()) {
+            System.out.println(
+                "No number was found in the filename" +
+                System.lineSeparator() +
+                "Added \" (1)\" to the filename" +
+                System.lineSeparator()
+            );
+            return filenameWithoutExtensions + " (1)";
+        }
 
-            if (lastNumberPatternMatcher.find()) {
-                String lastNumberString = lastNumberPatternMatcher.group(1);
-                int leadingZeroCount = 0;
+        String lastNumberString = lastNumberPatternMatcher.group(1);
+        @Nullable Number lastNumberParsed = parseNumber(lastNumberString);
+        @Nullable Number lastNumberIncremented = incrementNumber(lastNumberParsed);
 
-                if (lastNumberString.startsWith("0") && lastNumberString.length() > 1) {
-                    Pattern leadingZeroPattern = Pattern.compile("^0+");
-                    Matcher leadingZeroPatternMatcher = leadingZeroPattern.matcher(lastNumberString);
+        if (lastNumberIncremented == null) {
+            System.out.println(
+                "Could not increment (last) number in filename" +
+                System.lineSeparator() +
+                "Added \" (1)\" to the filename"
+            );
+            return filenameWithoutExtensions + " (1)";
+        }
 
-                    if (leadingZeroPatternMatcher.find()) {
-                        leadingZeroCount = leadingZeroPatternMatcher.group().length();
-                    }
-                }
+        String lastNumberIncrementedString = lastNumberIncremented.toString();
+        String lastNumberParsedString = lastNumberParsed.toString();
+        int leadingZeroCount = countLeadingZeros(lastNumberString);
 
-                @Nullable Number lastNumberParsed = parseNumber(lastNumberString);
-                @Nullable Number lastNumberIncremented = incrementNumber(lastNumberParsed);
-
-                if (lastNumberParsed == null || lastNumberIncremented == null) {
-                    System.out.println(
-                        "Could not increment number in filename" +
-                        System.lineSeparator() +
-                        "Added \" (1)\" to the filename instead"
-                    );
-
-                    return newFilename + " (1)";
-                }
-
-                String lastNumberIncrementedString = lastNumberIncremented.toString();
-                String lastNumberParsedString = lastNumberParsed.toString();
-
-                if (leadingZeroCount > 0) {
-                    if (
-                        lastNumberIncrementedString.length() > lastNumberParsedString.length() ||
-                        lastNumberString.length() == leadingZeroCount
-                    ) {
-                        leadingZeroCount--;
-                    }
-
-                    lastNumberIncrementedString = "0".repeat(leadingZeroCount) + lastNumberIncremented;
-                }
-
-                newFilename = filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1)) +
-                lastNumberIncrementedString +
-                filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
-            } else {
-                newFilename += " (1)";
-                System.out.println(
-                    "No number was found in the filename" +
-                    System.lineSeparator() +
-                    "Added \" (1)\" to the filename" +
-                    System.lineSeparator()
-                );
+        if (leadingZeroCount > 0) {
+            if (
+                lastNumberIncrementedString.length() > lastNumberParsedString.length() || // Number increased in length
+                lastNumberString.length() == leadingZeroCount // Number was all zeros
+            ) {
+                leadingZeroCount--;
             }
 
-            return newFilename;
-        } catch (
-            IllegalArgumentException
-            | IllegalStateException
-            | IndexOutOfBoundsException
-            | NullPointerException
-            | OutOfMemoryError exception
-        ) {
-            return newFilename + " (1)";
+            lastNumberIncrementedString = "0".repeat(leadingZeroCount) + lastNumberIncremented;
         }
+
+        String filenameBeforeLastNumber = filenameWithoutExtensions.substring(0, lastNumberPatternMatcher.start(1));
+        String filenameAfterLastNumber = filenameWithoutExtensions.substring(lastNumberPatternMatcher.end(1));
+
+        return filenameBeforeLastNumber + lastNumberIncrementedString + filenameAfterLastNumber;
     }
 
     @Nullable private static Number incrementNumber(Number number) {
